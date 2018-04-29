@@ -1,0 +1,70 @@
+@startuml
+scale 850 width
+[*]-->managerWEB:访问web管理界面
+AP --> ZK :订阅
+redisProxys -> ZK : 注册
+redisProxys --> redisDB
+
+redisDB->x_pipeSvc:同步数据
+
+state redisMonitor{
+    redisFailOver-->redisDB:监控redisServer是否正常
+    redisManager-->redisDB:管理与部署redisServer
+    state managerWEB{
+    }
+}
+
+state AP{
+  APRedisClient1 --> redisProxys:redis协议
+  APRedisClient2 --> redisProxys:redis协议
+  APRedisClient3 --> redisProxys:redis协议
+}
+
+state ZK{
+    state zk1
+    state zk2
+    state zk3
+  }
+
+state redisProxys {
+
+  state redisProxy1{
+  }
+  state redisProxy2{
+
+  }
+  state redisProxy3{
+
+  }
+
+}
+
+state redisDB {
+
+  [*] --> redis1 : hash访问
+  [*] --> redis2 : hash访问
+  [*] --> redis3 : hash访问
+
+  state redis1 {
+     master1 -> salve1 : sync
+     salve1 --> master1 : switch
+  }
+  state redis2 {
+       master2 -> salve2 : sync
+       salve2 --> master2 : switch
+    }
+  state redis3 {
+        master3 -> salve3 : sync
+        salve3 --> master3 : switch
+   }
+
+}
+
+state x_pipeSvc{
+    [*]-->DB_interface
+    [*]-->ES_interface
+    [*]-->MQ_interface
+    [*]-->HDFS_interface
+
+}
+@enduml
