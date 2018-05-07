@@ -48,7 +48,7 @@ rains-redisproxy 是一个开源Redis中间件服务，支持redis协议通信�
  *      redisProxy总体架构设计(初稿)
  ![](./doc/design/rains_redisProxy.png)
   *     redisProxy模块大体设计(初稿)
- ![](./doc/design/rains_redisProxyComponent.png)
+ ![](./doc/design/rains_redisProxyComponent.svg)
 
 #   Configuration
 
