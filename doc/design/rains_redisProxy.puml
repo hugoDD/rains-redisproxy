@@ -1,17 +1,22 @@
 @startuml
 scale 850 width
 [*]-->managerWEB:访问web管理界面
-AP --> ZK :订阅
-redisProxys -> ZK : 注册
+Eureka-->redisDB:监控redisServer节点队列是否正常
+AP --> Eureka :订阅
+redisProxys -> Eureka : 注册
 redisProxys --> redisDB
 
 redisDB->x_pipeSvc:同步数据
 
 state redisMonitor{
-    redisFailOver-->redisDB:监控redisServer是否正常
+    managerWEB -> redisManager:管理
     redisManager-->redisDB:管理与部署redisServer
+
     state managerWEB{
     }
+    state redisManager{
+    }
+
 }
 
 state AP{
@@ -20,15 +25,23 @@ state AP{
   APRedisClient3 --> redisProxys:redis协议
 }
 
-state ZK{
-    state zk1
-    state zk2
-    state zk3
+state Eureka{
+    state eureka1{
+        state redisFailOver1
+    }
+    state eureka2{
+        state redisFailOver2
+    }
+    state eureka3{
+        state redisFailOver3
+    }
+    Eureka -->redisManager:redisFailOver调用更新服务
   }
 
 state redisProxys {
 
   state redisProxy1{
+
   }
   state redisProxy2{
 

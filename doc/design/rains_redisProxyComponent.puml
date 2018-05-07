@@ -1,0 +1,45 @@
+@startuml
+
+package "rarins-redisproxy-core" {
+    [commons]
+    [threadpool]
+    [deliverycore]
+}
+
+package "rarins-redisproxy-client" {
+    APP - [delivery]
+    [delivery]-redisClient
+}
+
+package "rarins-redisproxy-redis-xpipesvc" {
+    redisDB - xpipe
+    xpipe --> [DB_infterface]
+    xpipe --> [ES_infterface]
+    xpipe --> [MQ_infterface]
+    xpipe --> [HDFS_infterface]
+
+}
+
+package "rarins-redisproxy-eureka" {
+    [delivery] --> eurekaServer
+    [redisFailOver]--> redisDB
+}
+
+
+package "rarins-redisproxy-net" {
+    redisClient --> [redisproxy]
+    [redisproxy] --> eurekaServer
+    [redisproxy]-->redisDB
+
+}
+
+package "rarins-redisproxy-admin" {
+    HTTP - [managerWeb]
+    [managerWeb]-[redisManger]
+    redisFailOver-->[redisManger]
+
+}
+
+
+
+@enduml
