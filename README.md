@@ -52,7 +52,7 @@ rains-redisproxy 是一个开源Redis中间件服务，支持redis协议通信�
 
 #   Configuration
 
-  ###  [配置详解](https://github.com/hugoDD/rains-transaction/wiki/configuration%EF%BC%88%E9%85%8D%E7%BD%AE%E8%AF%A6%E8%A7%A3%EF%BC%89)
+  ###  [配置详解](https://github.com/hugoDD/rains-redisproxy/wiki/configuration%EF%BC%88%E9%85%8D%E7%BD%AE%E8%AF%A6%E8%A7%A3%EF%BC%89)
 
 
 # Prerequisite
@@ -67,20 +67,13 @@ rains-redisproxy 是一个开源Redis中间件服务，支持redis协议通信�
 
 # Quick Start
 
-   * ### Clone & Build
-      ```
-      > git clone https://github.com/hugoDD/rains-redisproxy.git
-   
-      > cd rains-redisproxy
-   
-      > mvn -DskipTests clean install -U
-      ```
+ ### [Quick Start](https://github.com/hugoDD/rains-redisproxy/wiki/QuickStart)
 
   
 
 # User Guide
 
-###  [dubbo 用户](https://github.com/hugoDD/rains-redisproxy)
+###  [demo](https://github.com/hugoDD/rains-redisproxy/wiki/demo)
 
 
 
