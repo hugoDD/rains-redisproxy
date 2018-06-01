@@ -19,7 +19,7 @@ public class RedisProxyGroupNode implements Serializable {
 	private static final int MAXSLOTNUM= 64;
 
 
-	private List<RedisProxyMaster> redisProxyMasters;
+	private List<RedisProxyMaster> redisMasters;
 	
 	private String redisProxyHost;//主机名
 	
@@ -34,12 +34,12 @@ public class RedisProxyGroupNode implements Serializable {
 		return MAXSLOTNUM;
 	}
 
-	public List<RedisProxyMaster> getRedisProxyMasters() {
-		return redisProxyMasters;
+	public List<RedisProxyMaster> getRedisMasters() {
+		return redisMasters;
 	}
 
-	public void setRedisProxyMasters(List<RedisProxyMaster> redisProxyMasters) {
-		this.redisProxyMasters = redisProxyMasters;
+	public void setRedisMasters(List<RedisProxyMaster> redisMasters) {
+		this.redisMasters = redisMasters;
 	}
 
 	public String getRedisProxyHost() {

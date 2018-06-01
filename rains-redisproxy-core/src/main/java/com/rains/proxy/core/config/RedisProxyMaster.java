@@ -27,7 +27,9 @@ public class RedisProxyMaster implements Serializable{
 	
 	private RedisProxyPool redisProxyPool;//连接池配置
 	
-	private List<RedisProxySlave> redisProxyClusters;//多个从
+	private List<RedisProxySlave> redisSlaves;//多个从
+
+	private String slaveAlgorithm;
 	
 	//private LoadBalance loadClusterBalance;//从权重
 
@@ -64,11 +66,19 @@ public class RedisProxyMaster implements Serializable{
 		this.redisProxyPool = redisProxyPool;
 	}
 
-	public List<RedisProxySlave> getRedisProxyClusters() {
-		return redisProxyClusters;
+	public List<RedisProxySlave> getRedisSlaves() {
+		return redisSlaves;
 	}
 
-	public void setRedisProxyClusters(List<RedisProxySlave> redisProxyClusters) {
-		this.redisProxyClusters = redisProxyClusters;
+	public void setRedisSlaves(List<RedisProxySlave> redisSlaves) {
+		this.redisSlaves = redisSlaves;
+	}
+
+	public String getSlaveAlgorithm() {
+		return slaveAlgorithm;
+	}
+
+	public void setSlaveAlgorithm(String slaveAlgorithm) {
+		this.slaveAlgorithm = slaveAlgorithm;
 	}
 }

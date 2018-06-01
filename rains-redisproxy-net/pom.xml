@@ -61,6 +61,28 @@
           <groupId>org.springframework.cloud</groupId>
           <artifactId>spring-cloud-starter-feign</artifactId>
       </dependency>
+
+      <dependency>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-test</artifactId>
+          <scope>test</scope>
+      </dependency>
+
+      <dependency>
+          <groupId>org.openjdk.jmh</groupId>
+          <artifactId>jmh-core</artifactId>
+      </dependency>
+      <dependency>
+          <groupId>org.openjdk.jmh</groupId>
+          <artifactId>jmh-generator-annprocess</artifactId>
+          <scope>provided</scope>
+      </dependency>
+
+      <!--<dependency>-->
+          <!--<groupId>org.springframework.cloud</groupId>-->
+          <!--<artifactId>spring-cloud-netflix-eureka-server</artifactId>-->
+          <!--<scope>test</scope>-->
+      <!--</dependency>-->
      
   </dependencies>
 </project>

@@ -1,11 +1,39 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.rains.proxy.net;
 
 import com.netflix.appinfo.EurekaInstanceConfig;
 import com.netflix.appinfo.HealthCheckHandler;
 import com.netflix.discovery.EurekaClientConfig;
+import com.netflix.loadbalancer.ILoadBalancer;
+import com.rains.proxy.core.bean.LBRedisServerMasterCluster;
+import com.rains.proxy.core.bean.RedisPoolConfig;
+import com.rains.proxy.core.bean.support.LBRedisServerBean;
+import com.rains.proxy.core.bean.support.LBRedisServerClusterBean;
+import com.rains.proxy.core.cluster.LoadBalance;
+import com.rains.proxy.core.cluster.impl.ConsistentHashLoadBalance;
+import com.rains.proxy.core.cluster.impl.RoundRobinLoadBalance;
+import com.rains.proxy.core.config.RedisProxyConfiguration;
+import com.rains.proxy.core.config.RedisProxyMaster;
+import com.rains.proxy.core.config.RedisProxySlave;
 import com.rains.proxy.net.model.Server;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.*;
@@ -31,11 +59,10 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 
 
+import javax.annotation.Resource;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.springframework.cloud.commons.util.IdUtils.getDefaultInstanceId;
 
@@ -58,7 +85,63 @@ public class ServerConfiguration {
         this.env = env;
         this.propertyResolver = new RelaxedPropertyResolver(env);
     }
-//
+
+
+    @Bean(name="loadMasterBalance")
+    public LoadBalance consistentHashLoadBalance(){
+        return new ConsistentHashLoadBalance();
+    }
+
+    @Bean(name="loadSlaveBalance")
+    public LoadBalance roundRobinLoadBalance(){
+        return new RoundRobinLoadBalance();
+    }
+
+
+    @Bean
+    public LBRedisServerMasterCluster redisServerMasterCluster(RedisProxyConfiguration redisProxyConfiguration, @Qualifier("loadMasterBalance") LoadBalance loadMasterBalance,@Qualifier("loadSlaveBalance") LoadBalance loadSlaveBalance){
+        List<LBRedisServerClusterBean> list = new ArrayList<>();
+
+        RedisPoolConfig poolConfig = new RedisPoolConfig();
+        BeanUtils.copyProperties(redisProxyConfiguration.getRedisPool(),poolConfig);
+
+        List<RedisProxyMaster> masters =redisProxyConfiguration.getGroupNode().get(0).getRedisMasters();
+
+        for(RedisProxyMaster master : masters){
+            LBRedisServerBean redisServerBean = new LBRedisServerBean();
+            redisServerBean.setRedisPoolConfig(poolConfig);
+            redisServerBean.setHost(master.getHost());
+            redisServerBean.setPort(master.getPort());
+
+
+            LBRedisServerClusterBean redisServerClusterBean=  new LBRedisServerClusterBean();
+            redisServerClusterBean.setRedisServerMasterBean(redisServerBean);
+            redisServerClusterBean.setLoadClusterBalance(loadSlaveBalance);
+
+            //slave
+            List<LBRedisServerBean> slaves = new ArrayList<>();
+            for(RedisProxySlave slave :master.getRedisSlaves()){
+                LBRedisServerBean redisSlaveServerBean = new LBRedisServerBean();
+                redisSlaveServerBean.setRedisPoolConfig(poolConfig);
+                redisSlaveServerBean.setHost(slave.getHost());
+                redisSlaveServerBean.setPort(slave.getPort());
+                slaves.add(redisSlaveServerBean);
+            }
+            redisServerClusterBean.setRedisServerSlaveBeans(slaves);
+            list.add(redisServerClusterBean);
+        }
+
+
+
+
+        LBRedisServerMasterCluster redisServerMasterCluster = new LBRedisServerMasterCluster(list);
+        redisServerMasterCluster.setLoadMasterBalance(loadMasterBalance);
+
+        return redisServerMasterCluster;
+    }
+
+
+    //
     @Bean
     public Server server(){
         Server server =  new Server();

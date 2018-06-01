@@ -19,20 +19,23 @@ package com.rains.proxy.core.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.List;
+
 /**
  * @author dourx
  * @version V1.0
  * @Descripio: TOO
   @date a年 a 月  a日  a
  */
-@Configuration
 @ConfigurationProperties(prefix = "redisproxy", ignoreUnknownFields = true)
 public class RedisProxyConfiguration {
 
 
     private RedisProxyPool redisPool;
 
-    private RedisProxyGroupNode node;
+
+
+    private List<RedisProxyGroupNode> groupNode;
 
 
     public RedisProxyPool getRedisPool() {
@@ -43,11 +46,11 @@ public class RedisProxyConfiguration {
         this.redisPool = redisPool;
     }
 
-    public RedisProxyGroupNode getNode() {
-        return node;
+    public List<RedisProxyGroupNode> getGroupNode() {
+        return groupNode;
     }
 
-    public void setNode(RedisProxyGroupNode node) {
-        this.node = node;
+    public void setGroupNode(List<RedisProxyGroupNode> groupNode) {
+        this.groupNode = groupNode;
     }
 }
