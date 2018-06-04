@@ -1,0 +1,64 @@
+eureka:
+  client:
+    service-url:
+      defaultZone:  http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true # 注册时使用ip而不是主机名
+    instance-id:  ${spring.cloud.client.ipAddress}:${server.port}
+
+logging:
+  level:
+    root: INFO
+    com.rains.proxy: DEBUG
+
+
+security:
+  user:
+    name: user
+    password: pass
+
+spring:
+  application:
+    name: redisProxy
+server:
+  port: 6379
+
+redisproxy:
+  redisPool:
+    connectionTimeout:  5000
+    maxActiveConnection:  100
+    maxIdleConnection:  80
+    minConnection:  10
+    maxWaitMillisOnBorrow:  500
+    initialConnection:  5
+    timeBetweenEvictionRunsMillis:  60000
+    minEvictableIdleTimeMillis: 300000
+    minIdleEntries: 1
+    testOnBorrow: true
+    testOnReturn: true
+    testWhileIdle:  true
+  groupNode:
+    - redisMasters :
+       -  host: 172.26.223.109
+          port: 16379
+          redisSlaves:
+            - host: 172.26.223.109
+              port: 26379
+            - host: 172.26.223.109
+              port: 6379
+#       -  host: 172.26.223.108
+#          port: 16379
+#          redisSlaves:
+#            - host: 172.26.223.110
+#              port: 26379
+#            - host: 172.26.223.111
+#              port: 36379
+  netty:
+    serviceId : redisProxy
+    port: 6379
+    ip: 127.0.0.1
+    maxCount: 1000
+    heartTime: 10
+    tag:  dev
+
+

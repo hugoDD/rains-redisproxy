@@ -1,0 +1,44 @@
+logging:
+  level:
+    root: DEBUG
+
+
+security:
+  user:
+    name: user
+    password: pass
+
+
+redisproxy:
+  redisPool:
+    connectionTimeout:  5000
+    maxActiveConnection:  100
+    maxIdleConnection:  80
+    minConnection:  10
+    maxWaitMillisOnBorrow:  500
+    initialConnection:  5
+    timeBetweenEvictionRunsMillis:  60000
+    minEvictableIdleTimeMillis: 300000
+    minIdleEntries: 1
+    testOnBorrow: true
+    testOnReturn: true
+    testWhileIdle:  true
+  groupNode:
+    - redisMasters :
+       -  host: 172.26.223.109
+          port: 16379
+          redisSlaves:
+            - host: 172.26.223.110
+              port: 26379
+            - host: 172.26.223.111
+              port: 36379
+       -  host: 172.26.223.108
+          port: 16379
+          redisSlaves:
+            - host: 172.26.223.110
+              port: 26379
+            - host: 172.26.223.111
+              port: 36379
+
+
+
