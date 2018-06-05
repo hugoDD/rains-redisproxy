@@ -14,20 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rains.proxy.core.client;
+package com.rains.proxy.core.pool.exception;
 
 /**
  * @author dourx
  * @version V1.0
  * 创建日期 2018/6/4
- * 请求redis客户端接口
+ *
  */
-public interface Client {
+public class RedisProxyPoolPropertyValidationException extends Exception {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1420614214978891385L;
 	
-    /**
-     * close the channel.
-     */
-    void close();
+	public RedisProxyPoolPropertyValidationException(String message) {
+		super(message);
+	}
 
+	public RedisProxyPoolPropertyValidationException(String message, Throwable cause) {
+		super(message, cause);
+	}
 }

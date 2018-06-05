@@ -1,9 +1,9 @@
 package com.rains.proxy.core.cluster.impl;
 
-import com.rains.proxy.core.bean.LBRedisServerMasterCluster;
+import com.rains.proxy.core.bean.RedisServerMasterCluster;
 import com.rains.proxy.core.bean.RedisPoolConfig;
-import com.rains.proxy.core.bean.support.LBRedisServerBean;
-import com.rains.proxy.core.bean.support.LBRedisServerClusterBean;
+import com.rains.proxy.core.bean.support.RedisServerBean;
+import com.rains.proxy.core.bean.support.RedisServerClusterBean;
 import com.rains.proxy.core.command.impl.RedisCommand;
 import com.rains.proxy.core.config.RedisProxyConfiguration;
 import com.rains.proxy.core.config.RedisProxyMaster;
@@ -59,9 +59,9 @@ public class BaseLoadBalanceTest {
 
     }
 
-    protected LBRedisServerMasterCluster init(){
+    protected RedisServerMasterCluster init(){
 
-        List<LBRedisServerClusterBean> list = new ArrayList<>();
+        List<RedisServerClusterBean> list = new ArrayList<>();
 
         RedisPoolConfig poolConfig = new RedisPoolConfig();
         BeanUtils.copyProperties(redisProxyConfiguration.getRedisPool(),poolConfig);
@@ -69,18 +69,18 @@ public class BaseLoadBalanceTest {
         List<RedisProxyMaster> masters =redisProxyConfiguration.getGroupNode().get(0).getRedisMasters();
 
         for(RedisProxyMaster master : masters){
-            LBRedisServerBean redisServerBean = new LBRedisServerBean();
+            RedisServerBean redisServerBean = new RedisServerBean();
             redisServerBean.setRedisPoolConfig(poolConfig);
             redisServerBean.setHost(master.getHost());
             redisServerBean.setPort(master.getPort());
 
-            LBRedisServerClusterBean redisServerClusterBean=  new LBRedisServerClusterBean();
+            RedisServerClusterBean redisServerClusterBean=  new RedisServerClusterBean();
             redisServerClusterBean.setRedisServerMasterBean(redisServerBean);
 
             //slave
-            List<LBRedisServerBean> slaves = new ArrayList<>();
+            List<RedisServerBean> slaves = new ArrayList<>();
             for(RedisProxySlave slave :master.getRedisSlaves()){
-                LBRedisServerBean redisSlaveServerBean = new LBRedisServerBean();
+                RedisServerBean redisSlaveServerBean = new RedisServerBean();
                 redisSlaveServerBean.setRedisPoolConfig(poolConfig);
                 redisSlaveServerBean.setHost(slave.getHost());
                 redisSlaveServerBean.setPort(slave.getPort());
@@ -93,7 +93,7 @@ public class BaseLoadBalanceTest {
 
 
 
-        LBRedisServerMasterCluster redisServerMasterCluster = new LBRedisServerMasterCluster(list);
+        RedisServerMasterCluster redisServerMasterCluster = new RedisServerMasterCluster(list);
 
         return redisServerMasterCluster;
 

@@ -14,20 +14,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rains.proxy.core.client;
+package com.rains.proxy.core.pool;
+
+
+import com.rains.proxy.core.pool.commons.Pool;
+
+import java.util.concurrent.TimeUnit;
+
 
 /**
  * @author dourx
  * @version V1.0
  * 创建日期 2018/6/4
- * 请求redis客户端接口
+ * 空闲队列接口
  */
-public interface Client {
+public interface IdleEntriesQueue<T extends Pool> {
 
+
+	/**
+	 *
+	 * @return
+	 */
+	PoolEntry<T> poll(long timeout) throws InterruptedException;
+	/**
+	 * 
+	 * @return
+	 */
+	PoolEntry<T> poll(long timeout, TimeUnit unit) throws InterruptedException;
 	
-    /**
-     * close the channel.
-     */
-    void close();
-
+	
+	PoolEntry<T> poll();
+	
+	/**
+	 * 
+	 * @param entry
+	 * @return
+	 * @throws NullPointerException
+	 */
+	boolean offer(PoolEntry<T> entry) throws NullPointerException;
+	
+	
+	public int getIdleEntriesCount();
+	
+	
+	public void clear();
 }

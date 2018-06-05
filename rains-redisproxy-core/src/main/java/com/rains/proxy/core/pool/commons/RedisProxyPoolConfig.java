@@ -1,16 +1,30 @@
 /**
- * 
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.rains.proxy.core.pool.commons;
 
 
-import com.rains.proxy.core.pool.exception.LBRedisProxyPoolPropertyValidationException;
+import com.rains.proxy.core.pool.exception.RedisProxyPoolPropertyValidationException;
 
 /**
- * @author liubing
- *
+ * @author dourx
+ * @version V1.0
+ * 创建日期 2018/6/4
  */
-public class LBRedisProxyPoolConfig {
+public class RedisProxyPoolConfig {
 	
 	
 
@@ -40,18 +54,18 @@ public class LBRedisProxyPoolConfig {
 	
 	private boolean testWhileIdle=false;//回收空闲验证
 
-	public void validatePropCorrelation() throws LBRedisProxyPoolPropertyValidationException {
+	public void validatePropCorrelation() throws RedisProxyPoolPropertyValidationException {
 		if (maxActiveEntries < initialEntries)
-			throw new LBRedisProxyPoolPropertyValidationException(
+			throw new RedisProxyPoolPropertyValidationException(
 					"maxActiveEntries < initialEntries");
 		if (maxActiveEntries < minActiveEntries)
-			throw new LBRedisProxyPoolPropertyValidationException(
+			throw new RedisProxyPoolPropertyValidationException(
 					"maxActiveEntries < minActiveEntries");
 		if (initialEntries < minActiveEntries)
-			throw new LBRedisProxyPoolPropertyValidationException(
+			throw new RedisProxyPoolPropertyValidationException(
 					"initialEntries < minActiveEntries");
 		if (maxActiveEntries < minIdleEntries)
-			throw new LBRedisProxyPoolPropertyValidationException(
+			throw new RedisProxyPoolPropertyValidationException(
 					"maxActiveEntries < minIdleEntries");
 
 	}

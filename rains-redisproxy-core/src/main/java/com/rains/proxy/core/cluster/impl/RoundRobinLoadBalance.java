@@ -4,7 +4,7 @@
 package com.rains.proxy.core.cluster.impl;
 
 import com.rains.proxy.core.algorithm.impl.RoundRobinHash;
-import com.rains.proxy.core.bean.support.LBRedisServerBean;
+import com.rains.proxy.core.bean.support.RedisServerBean;
 import com.rains.proxy.core.cluster.impl.support.RedisQuestBean;
 
 import java.util.List;
@@ -24,10 +24,10 @@ public class RoundRobinLoadBalance extends AbstractLoadBalance {
 	 * @see com.wanda.ffan.redis.proxy.core.cluster.impl.AbstractLoadBalance#doSelect(com.wanda.ffan.redis.proxy.core.cluster.impl.support.RedisQuestBean, java.util.List)
 	 */
 	@Override
-	protected LBRedisServerBean doSelect(RedisQuestBean redisQuestBean,
-			List<LBRedisServerBean> ffanRedisMasterServers) {
-		RoundRobinHash<LBRedisServerBean> roundRobinHash=new RoundRobinHash<LBRedisServerBean>(ffanRedisMasterServers);
-		LBRedisServerBean result=roundRobinHash.weightRandom();
+	protected RedisServerBean doSelect(RedisQuestBean redisQuestBean,
+                                       List<RedisServerBean> ffanRedisMasterServers) {
+		RoundRobinHash<RedisServerBean> roundRobinHash=new RoundRobinHash<RedisServerBean>(ffanRedisMasterServers);
+		RedisServerBean result=roundRobinHash.weightRandom();
 		return result;
 	}
 

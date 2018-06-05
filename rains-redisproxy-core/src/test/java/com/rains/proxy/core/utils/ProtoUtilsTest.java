@@ -1,8 +1,13 @@
 package com.rains.proxy.core.utils;
 
+import com.rains.proxy.core.config.RedisProxyConfigurationTest;
+import com.rains.proxy.core.config.RedisProxyMockTest;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.*;
 
@@ -12,6 +17,7 @@ import static org.junit.Assert.*;
  * @Description: TODO
  * @date 2018年 05 月  30日  9:48
  */
+
 public class ProtoUtilsTest {
 
     @Test

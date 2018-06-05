@@ -1,27 +1,17 @@
 package com.rains.proxy.core.command.handler;
 
-import com.rains.proxy.core.bean.LBRedisServerMasterCluster;
-import com.rains.proxy.core.bean.support.LBRedisServerBean;
+import com.rains.proxy.core.bean.RedisServerMasterCluster;
 import com.rains.proxy.core.client.impl.AbstractPoolClient;
-import com.rains.proxy.core.cluster.LoadBalance;
-import com.rains.proxy.core.cluster.impl.support.RedisQuestBean;
 import com.rains.proxy.core.command.IRedisCommandHander;
 import com.rains.proxy.core.command.execute.KeyCmdExecute;
 import com.rains.proxy.core.command.execute.ServerCmdExecute;
 import com.rains.proxy.core.command.execute.ThrooughCmdExecute;
 import com.rains.proxy.core.command.impl.RedisCommand;
-import com.rains.proxy.core.command.impl.RedisRequestPolicy;
 import com.rains.proxy.core.enums.RedisCmdEnums;
-import com.rains.proxy.core.enums.RedisCmdTypeEnums;
-import com.rains.proxy.core.enums.RedisCommandEnums;
 import com.rains.proxy.core.reply.IRedisReply;
-import com.rains.proxy.core.reply.impl.EmptyRedisReply;
-import com.rains.proxy.core.reply.impl.ErrorRedisReply;
-import com.rains.proxy.core.utils.ProtoUtils;
 import io.netty.channel.ChannelHandlerContext;
 import org.springframework.util.Assert;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -31,7 +21,7 @@ import java.util.Map;
  * TODO
  */
 public class ThrooughCmdHandler implements IRedisCommandHander<RedisCommand> {
-//    private LBRedisServerMasterCluster redisServerMasterCluster;
+//    private RedisServerMasterCluster redisServerMasterCluster;
 //    private Map<String, AbstractPoolClient> redisServerBeanMap;
     private ServerCmdExecute serverCmdExecute;
 
@@ -45,7 +35,7 @@ public class ThrooughCmdHandler implements IRedisCommandHander<RedisCommand> {
     public ThrooughCmdHandler() {
     }
 
-    public ThrooughCmdHandler(Map<String, AbstractPoolClient> redisServerBeanMap, LBRedisServerMasterCluster redisServerMasterCluster) {
+    public ThrooughCmdHandler(Map<String, AbstractPoolClient> redisServerBeanMap, RedisServerMasterCluster redisServerMasterCluster) {
         serverCmdExecute = new ServerCmdExecute(redisServerBeanMap,redisServerMasterCluster);
         keyCmdExecute =  new KeyCmdExecute(redisServerBeanMap,redisServerMasterCluster);
         throoughCmdExecute = new ThrooughCmdExecute(redisServerBeanMap,redisServerMasterCluster);

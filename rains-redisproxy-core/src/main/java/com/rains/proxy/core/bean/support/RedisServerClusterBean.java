@@ -13,18 +13,18 @@ import java.util.List;
  *
  * @author liubing
  */
-public class LBRedisServerClusterBean {
+public class RedisServerClusterBean {
 
-    private LBRedisServerBean redisServerMasterBean;//主
+    private RedisServerBean redisServerMasterBean;//主
 
-    private List<LBRedisServerBean> redisServerSlaveBeans;//从
+    private List<RedisServerBean> redisServerSlaveBeans;//从
 
     private LoadBalance loadClusterBalance;//从权重
 
     /**
      *
      */
-    public LBRedisServerClusterBean() {
+    public RedisServerClusterBean() {
         super();
     }
 
@@ -45,20 +45,20 @@ public class LBRedisServerClusterBean {
     /**
      * @return the redisRedisServerMasterBean
      */
-    public LBRedisServerBean getRedisServerMasterBean() {
+    public RedisServerBean getRedisServerMasterBean() {
         return redisServerMasterBean;
     }
 
 
     public void setRedisServerMasterBean(
-            LBRedisServerBean redisServerMasterBean) {
+            RedisServerBean redisServerMasterBean) {
         this.redisServerMasterBean = redisServerMasterBean;
     }
 
     /**
      * @return the redisServerSlaveBeans
      */
-    public List<LBRedisServerBean> getRedisServerSlaveBeans() {
+    public List<RedisServerBean> getRedisServerSlaveBeans() {
         return redisServerSlaveBeans;
     }
 
@@ -66,7 +66,7 @@ public class LBRedisServerClusterBean {
      * @param redisServerSlaveBeans the redisServerSlaveBeans to set
      */
     public void setRedisServerSlaveBeans(
-            List<LBRedisServerBean> redisServerSlaveBeans) {
+            List<RedisServerBean> redisServerSlaveBeans) {
         this.redisServerSlaveBeans = redisServerSlaveBeans;
     }
 

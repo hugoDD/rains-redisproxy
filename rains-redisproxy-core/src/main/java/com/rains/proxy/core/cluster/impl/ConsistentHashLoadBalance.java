@@ -7,7 +7,7 @@ package com.rains.proxy.core.cluster.impl;
 import com.rains.proxy.core.algorithm.Hashing;
 import com.rains.proxy.core.algorithm.impl.ConsistentHash;
 import com.rains.proxy.core.algorithm.impl.MurmurHash;
-import com.rains.proxy.core.bean.support.LBRedisServerBean;
+import com.rains.proxy.core.bean.support.RedisServerBean;
 import com.rains.proxy.core.cluster.impl.support.RedisQuestBean;
 
 import java.util.List;
@@ -30,11 +30,11 @@ public class ConsistentHashLoadBalance extends AbstractLoadBalance {
 	 * @see com.wanda.ffan.redis.proxy.core.cluster.impl.AbstractLoadBalance#doSelect(com.wanda.ffan.redis.proxy.core.cluster.impl.support.RedisQuestBean, java.util.List)
 	 */
 	@Override
-	protected LBRedisServerBean doSelect(RedisQuestBean redisQuestBean,
-										 List<LBRedisServerBean> ffanRedisMasterServers) {
+	protected RedisServerBean doSelect(RedisQuestBean redisQuestBean,
+                                       List<RedisServerBean> ffanRedisMasterServers) {
 		Hashing hashFunction = new MurmurHash(); // hash函数实例
-		ConsistentHash<LBRedisServerBean> consistentHash=new ConsistentHash<LBRedisServerBean>(hashFunction, ffanRedisMasterServers.size(), ffanRedisMasterServers);
-		LBRedisServerBean ffanRedisServerBean=consistentHash.getBytes(redisQuestBean.getKey());
+		ConsistentHash<RedisServerBean> consistentHash=new ConsistentHash<RedisServerBean>(hashFunction, ffanRedisMasterServers.size(), ffanRedisMasterServers);
+		RedisServerBean ffanRedisServerBean=consistentHash.getBytes(redisQuestBean.getKey());
 		return ffanRedisServerBean;
 	}
 	

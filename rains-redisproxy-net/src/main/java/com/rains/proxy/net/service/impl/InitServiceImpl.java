@@ -1,8 +1,8 @@
 package com.rains.proxy.net.service.impl;
 
-import com.rains.proxy.core.bean.LBRedisServerMasterCluster;
+import com.rains.proxy.core.bean.RedisServerMasterCluster;
 import com.rains.proxy.net.model.Server;
-import com.rains.proxy.net.server.LBRedisServer;
+import com.rains.proxy.net.server.RedisProxyServer;
 import com.rains.proxy.net.service.InitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -19,12 +19,12 @@ import javax.annotation.PreDestroy;
 public class InitServiceImpl implements InitService {
 
     @Autowired
-    private LBRedisServerMasterCluster redisServerMasterCluster;
+    private RedisServerMasterCluster redisServerMasterCluster;
 
 //    @Autowired
 //    private NettyServerService nettyServerService;
 
-   private LBRedisServer ffanRedisServer;
+   private RedisProxyServer ffanRedisServer;
 
     @Autowired
     private Server serverConfig;
@@ -45,7 +45,7 @@ public class InitServiceImpl implements InitService {
 //        nettyServerService.start();
 //        SocketManager.getInstance().setMaxConnection(serverConfig.getMaxCount());
 
-         ffanRedisServer=new LBRedisServer(redisServerMasterCluster);
+         ffanRedisServer=new RedisProxyServer(redisServerMasterCluster);
 
         ffanRedisServer.start();
     }

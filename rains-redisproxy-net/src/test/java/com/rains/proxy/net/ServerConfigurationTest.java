@@ -1,12 +1,10 @@
 package com.rains.proxy.net;
 
-import com.rains.proxy.core.bean.LBRedisServerMasterCluster;
-import com.rains.proxy.core.bean.support.LBRedisServerBean;
+import com.rains.proxy.core.bean.RedisServerMasterCluster;
+import com.rains.proxy.core.bean.support.RedisServerBean;
 import com.rains.proxy.core.cluster.LoadBalance;
 import com.rains.proxy.core.cluster.impl.ConsistentHashLoadBalance;
 import com.rains.proxy.net.model.Server;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +37,7 @@ public class ServerConfigurationTest {
     private Server server;
 
      @Autowired
-    private LBRedisServerMasterCluster redisServerMasterCluster;
+    private RedisServerMasterCluster redisServerMasterCluster;
 
 
 
@@ -59,9 +57,9 @@ public class ServerConfigurationTest {
     @Test
     public void redisServerMasterCluster() {
         assertNotNull(redisServerMasterCluster);
-       List<LBRedisServerBean> masters = redisServerMasterCluster.getMasters();
+       List<RedisServerBean> masters = redisServerMasterCluster.getMasters();
         LoadBalance loadBalance = redisServerMasterCluster.getLoadMasterBalance();
-        List<LBRedisServerBean> slaves = redisServerMasterCluster.getMasterFfanRedisServerBean(masters.get(0).getKey());
+        List<RedisServerBean> slaves = redisServerMasterCluster.getMasterFfanRedisServerBean(masters.get(0).getKey());
 
        assertEquals(2,masters.size());
        assertEquals(2,slaves.size());

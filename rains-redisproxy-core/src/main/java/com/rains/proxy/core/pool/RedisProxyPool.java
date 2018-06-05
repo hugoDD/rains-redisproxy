@@ -14,20 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rains.proxy.core.client;
+package com.rains.proxy.core.pool;
+
+import com.rains.proxy.core.pool.commons.Pool;
+import com.rains.proxy.core.pool.exception.RedisProxyPoolException;
+
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 
 /**
  * @author dourx
  * @version V1.0
  * 创建日期 2018/6/4
- * 请求redis客户端接口
  */
-public interface Client {
+public interface RedisProxyPool<T  extends Pool> {
 
+
+	PoolEntry<T> borrowEntry() throws InterruptedException, TimeoutException,RedisProxyPoolException;
+
+	PoolEntry<T> borrowEntry(boolean createNew) throws InterruptedException,
+			TimeoutException, RedisProxyPoolException;
+
+	PoolEntry<T> borrowEntry(boolean createNew, long timeout, TimeUnit unit)
+			throws InterruptedException, TimeoutException, RedisProxyPoolException;
+
+	void returnEntry(PoolEntry<T> entry) throws RedisProxyPoolException;
 	
-    /**
-     * close the channel.
-     */
-    void close();
-
+	void shutDown()throws RedisProxyPoolException;
 }

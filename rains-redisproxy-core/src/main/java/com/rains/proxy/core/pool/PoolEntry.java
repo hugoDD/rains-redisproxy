@@ -14,20 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rains.proxy.core.client;
+package com.rains.proxy.core.pool;
+
+import com.rains.proxy.core.pool.commons.RedisProxyPoolEntryState;
+import com.rains.proxy.core.pool.commons.Pool;
+
 
 /**
  * @author dourx
  * @version V1.0
  * 创建日期 2018/6/4
- * 请求redis客户端接口
+ * 对象T接口封装
  */
-public interface Client {
+public interface PoolEntry<T extends Pool> {
+	
+	T getObject();
 
 	
-    /**
-     * close the channel.
-     */
-    void close();
-
+	RedisProxyPoolEntryState getState();
 }

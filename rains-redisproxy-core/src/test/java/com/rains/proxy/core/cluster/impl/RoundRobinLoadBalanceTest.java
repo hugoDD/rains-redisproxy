@@ -1,7 +1,7 @@
 package com.rains.proxy.core.cluster.impl;
 
-import com.rains.proxy.core.bean.LBRedisServerMasterCluster;
-import com.rains.proxy.core.bean.support.LBRedisServerBean;
+import com.rains.proxy.core.bean.RedisServerMasterCluster;
+import com.rains.proxy.core.bean.support.RedisServerBean;
 import com.rains.proxy.core.cluster.impl.support.RedisQuestBean;
 import com.rains.proxy.core.config.RedisProxyMockTest;
 import org.junit.Before;
@@ -35,9 +35,9 @@ public class RoundRobinLoadBalanceTest extends BaseLoadBalanceTest {
 
     @Test
     public void onRefresh() {
-        LBRedisServerMasterCluster masterCluster = loadBalance.getFfanRedisServerMasterCluster();
+        RedisServerMasterCluster masterCluster = loadBalance.getFfanRedisServerMasterCluster();
 
-        LBRedisServerMasterCluster initMasterCluster = init();
+        RedisServerMasterCluster initMasterCluster = init();
         assertNotNull(masterCluster);
         assertNotSame(masterCluster, initMasterCluster);//断言刚初始化的主集群与loadbalace已存在的集群不一样
 
@@ -53,17 +53,17 @@ public class RoundRobinLoadBalanceTest extends BaseLoadBalanceTest {
         //set mykey myvalue
         RedisQuestBean redisQuestBean=new RedisQuestBean(new String(request.getArgs().get(0)), request.getArgs().get(1),true );
 
-        LBRedisServerBean serverBean = loadBalance.select(redisQuestBean,null);
-        LBRedisServerBean serverBean1 = loadBalance.select(redisQuestBean,null);
-        LBRedisServerBean serverBean2 = loadBalance.select(redisQuestBean,null);
+        RedisServerBean serverBean = loadBalance.select(redisQuestBean,null);
+        RedisServerBean serverBean1 = loadBalance.select(redisQuestBean,null);
+        RedisServerBean serverBean2 = loadBalance.select(redisQuestBean,null);
 
 
         assertNotNull(serverBean);
         assertNotNull(serverBean1);
         assertNotNull(serverBean2);
 
-        LBRedisServerMasterCluster masterCluster = loadBalance.getFfanRedisServerMasterCluster();
-        List<LBRedisServerBean> masters =  masterCluster.getMasters();
+        RedisServerMasterCluster masterCluster = loadBalance.getFfanRedisServerMasterCluster();
+        List<RedisServerBean> masters =  masterCluster.getMasters();
 
         assertTrue(masters.contains(serverBean));
         assertTrue(masters.contains(serverBean1));
@@ -77,12 +77,12 @@ public class RoundRobinLoadBalanceTest extends BaseLoadBalanceTest {
 
 
         loadBalance.setFfanRedisServerMasterCluster(init());
-        LBRedisServerBean redisServerBean= loadBalance.getFfanRedisServerMasterCluster().getMasters().get(0);
+        RedisServerBean redisServerBean= loadBalance.getFfanRedisServerMasterCluster().getMasters().get(0);
 
 
-        LBRedisServerBean serverBean = loadBalance.select(redisQuestBean,redisServerBean);
+        RedisServerBean serverBean = loadBalance.select(redisQuestBean,redisServerBean);
 
-        List<LBRedisServerBean> slaves=loadBalance.getFfanRedisServerMasterCluster().getMasterFfanRedisServerBean(redisServerBean.getKey());
+        List<RedisServerBean> slaves=loadBalance.getFfanRedisServerMasterCluster().getMasterFfanRedisServerBean(redisServerBean.getKey());
 
         assertNotNull(serverBean);
         assertTrue(slaves.contains(serverBean));

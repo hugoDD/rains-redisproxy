@@ -17,21 +17,21 @@
 package com.rains.proxy.net.client.suppot;
 
 import com.rains.proxy.core.command.impl.RedisCommand;
-import com.rains.proxy.core.log.impl.LoggerUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOutboundHandlerAdapter;
 import io.netty.channel.ChannelPromise;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
+ * @author dourx
+ * @version V1.0
+ * 创建日期 2018/6/4
  * 解码处理
- * 
- * @author liubing
- *
  */
-public class LBRedisClientOutHandler extends ChannelOutboundHandlerAdapter {
-	private static final Logger logger = LoggerFactory.getLogger(LBRedisClientOutHandler.class);
+public class RedisClientOutHandler extends ChannelOutboundHandlerAdapter {
+	private static final Logger logger = LoggerFactory.getLogger(RedisClientOutHandler.class);
 	
 		
 	@Override

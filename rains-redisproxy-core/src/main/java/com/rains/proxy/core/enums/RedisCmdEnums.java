@@ -249,10 +249,13 @@ public enum RedisCmdEnums {
         if(Objects.isNull(cmd)){
             return new RedisRequestPolicy(DISABLED_CMD, NO_THROUGH_CMD, READ_CMD);
         }
-        RedisCmdEnums redisCmdEnums= RedisCmdEnums.valueOf(cmd.toUpperCase());
-        if(redisCmdEnums==null){
+        RedisCmdEnums redisCmdEnums;
+        try{
+             redisCmdEnums= RedisCmdEnums.valueOf(cmd.toUpperCase());
+        }catch (IllegalArgumentException e){
             return new RedisRequestPolicy(DISABLED_CMD, NO_THROUGH_CMD, READ_CMD);
         }
+
         return redisCmdEnums.policy;
     }
 }

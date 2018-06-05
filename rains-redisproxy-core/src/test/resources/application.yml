@@ -14,7 +14,7 @@ redisproxy:
     connectionTimeout:  5000
     maxActiveConnection:  100
     maxIdleConnection:  80
-    minConnection:  10
+    minConnection:  3
     maxWaitMillisOnBorrow:  500
     initialConnection:  5
     timeBetweenEvictionRunsMillis:  60000

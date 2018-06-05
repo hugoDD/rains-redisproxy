@@ -65,7 +65,7 @@ public class ConnectionCmdExecuteTest extends BaseCmdTest {
         assertNotNull(command);
         reply= execute.execute(command);
         assertNotNull(reply);
-        assertEquals(Type.STATUS,reply.getType());
+        assertEquals(Type.BULK,reply.getType());
 
         command =createCmd("SELECT 1");
         assertNotNull(command);

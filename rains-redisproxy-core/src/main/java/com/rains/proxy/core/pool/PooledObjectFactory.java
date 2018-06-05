@@ -14,20 +14,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rains.proxy.core.client;
+package com.rains.proxy.core.pool;
+
+
+import com.rains.proxy.core.pool.commons.Pool;
+import com.rains.proxy.core.pool.exception.RedisProxyPoolException;
+
 
 /**
  * @author dourx
  * @version V1.0
  * 创建日期 2018/6/4
- * 请求redis客户端接口
+ * 对象创建接口 T
  */
-public interface Client {
-
+public interface PooledObjectFactory<T extends Pool> {
 	
-    /**
-     * close the channel.
-     */
-    void close();
-
+	/**
+	 * 创建实例
+	 * @return
+	 * @throws RedisProxyPoolException
+	 */
+	T createInstance() throws RedisProxyPoolException;
+	
+	/**
+	 * 验证T
+	 * @param t
+	 * @throws Exception
+	 */
+	public Boolean validateEntry(T t) throws RedisProxyPoolException;
+	
+	/**
+	 * 销废
+	 * @param t
+	 * @throws Exception
+	 */
+	public void destroyEntry(T t) throws RedisProxyPoolException;
 }

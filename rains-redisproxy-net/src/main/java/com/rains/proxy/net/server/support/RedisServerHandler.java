@@ -17,9 +17,9 @@
 package com.rains.proxy.net.server.support;
 
 
-import com.rains.proxy.core.bean.LBRedisServerMasterCluster;
-import com.rains.proxy.core.bean.support.LBRedisServerBean;
-import com.rains.proxy.core.bean.support.LBRedisServerClusterBean;
+import com.rains.proxy.core.bean.RedisServerMasterCluster;
+import com.rains.proxy.core.bean.support.RedisServerBean;
+import com.rains.proxy.core.bean.support.RedisServerClusterBean;
 import com.rains.proxy.core.client.impl.AbstractPoolClient;
 import com.rains.proxy.core.cluster.LoadBalance;
 import com.rains.proxy.core.cluster.impl.support.RedisQuestBean;
@@ -32,7 +32,6 @@ import com.rains.proxy.core.reply.impl.ErrorRedisReply;
 import com.rains.proxy.core.utils.ProtoUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -55,12 +54,12 @@ public class RedisServerHandler extends ChannelInboundHandlerAdapter {
 
     private Map<String, AbstractPoolClient> ffanRedisServerBeanMap;
 
-    private LBRedisServerMasterCluster ffanRedisServerMasterCluster;
+    private RedisServerMasterCluster ffanRedisServerMasterCluster;
 
     private RedisCommandControl redisCommandControl;
 
 
-    public RedisServerHandler(Map<String, AbstractPoolClient> ffanRedisServerBeanMap, LBRedisServerMasterCluster ffanRedisServerMasterCluster) {
+    public RedisServerHandler(Map<String, AbstractPoolClient> ffanRedisServerBeanMap, RedisServerMasterCluster ffanRedisServerMasterCluster) {
         this.ffanRedisServerMasterCluster = ffanRedisServerMasterCluster;
         this.ffanRedisServerBeanMap = ffanRedisServerBeanMap;
         redisCommandControl = new RedisCommandControl(ffanRedisServerBeanMap, ffanRedisServerMasterCluster);
@@ -162,15 +161,15 @@ public class RedisServerHandler extends ChannelInboundHandlerAdapter {
     private AbstractPoolClient getShardClusterFfanRedisClient(RedisCommand request, String command, boolean flag) {
         RedisQuestBean redisQuestBean = new RedisQuestBean(new String(request.getArgs().get(0)), request.getArgs().get(1), true);
         LoadBalance loadMasterBalance = ffanRedisServerMasterCluster.getLoadMasterBalance();
-        LBRedisServerBean ffanRedisServerBean = loadMasterBalance.select(redisQuestBean, null);
-        List<LBRedisServerBean> ffanRedisServerBeans = ffanRedisServerMasterCluster.getMasterFfanRedisServerBean(ffanRedisServerBean.getKey());
+        RedisServerBean ffanRedisServerBean = loadMasterBalance.select(redisQuestBean, null);
+        List<RedisServerBean> ffanRedisServerBeans = ffanRedisServerMasterCluster.getMasterFfanRedisServerBean(ffanRedisServerBean.getKey());
         if (ffanRedisServerBeans != null && ffanRedisServerBeans.size() > 0) {
-            LBRedisServerClusterBean redisServerClusterBean = ffanRedisServerMasterCluster.getRedisServerClusterBean(ffanRedisServerBean.getKey());
+            RedisServerClusterBean redisServerClusterBean = ffanRedisServerMasterCluster.getRedisServerClusterBean(ffanRedisServerBean.getKey());
             if (redisServerClusterBean != null) {
                 LoadBalance loadClusterBalance = redisServerClusterBean.getLoadClusterBalance();
                 loadClusterBalance.setFfanRedisServerMasterCluster(ffanRedisServerMasterCluster);
                 redisQuestBean.setWrite(flag);
-                LBRedisServerBean ffanClusterRedisServerBean = loadClusterBalance.select(redisQuestBean, ffanRedisServerBean);
+                RedisServerBean ffanClusterRedisServerBean = loadClusterBalance.select(redisQuestBean, ffanRedisServerBean);
                 if (ffanClusterRedisServerBean != null) {
                     String key = ffanClusterRedisServerBean.getKey();
                     return ffanRedisServerBeanMap.get(key);
@@ -194,7 +193,7 @@ public class RedisServerHandler extends ChannelInboundHandlerAdapter {
             key = ffanRedisServerMasterCluster.getMasters().get(0).getKey();
         } else {
             LoadBalance loadMasterBalance = ffanRedisServerMasterCluster.getLoadMasterBalance();
-            LBRedisServerBean ffanRedisServerBean = loadMasterBalance.select(redisQuestBean, null);
+            RedisServerBean ffanRedisServerBean = loadMasterBalance.select(redisQuestBean, null);
             key = ffanRedisServerBean.getKey();
         }
 

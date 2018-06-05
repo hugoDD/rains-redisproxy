@@ -1,9 +1,9 @@
 package com.rains.proxy.core.cluster.impl;
 
-import com.rains.proxy.core.bean.LBRedisServerMasterCluster;
+import com.rains.proxy.core.bean.RedisServerMasterCluster;
 import com.rains.proxy.core.bean.RedisPoolConfig;
-import com.rains.proxy.core.bean.support.LBRedisServerBean;
-import com.rains.proxy.core.bean.support.LBRedisServerClusterBean;
+import com.rains.proxy.core.bean.support.RedisServerBean;
+import com.rains.proxy.core.bean.support.RedisServerClusterBean;
 import com.rains.proxy.core.cluster.impl.support.RedisQuestBean;
 import com.rains.proxy.core.command.impl.RedisCommand;
 import com.rains.proxy.core.config.*;
@@ -65,9 +65,9 @@ public class ConsistentHashLoadBalanceTest {
         requestSlave.encode(slaveBuf);
     }
 
-    private  LBRedisServerMasterCluster init(){
+    private RedisServerMasterCluster init(){
 
-        List<LBRedisServerClusterBean> list = new ArrayList<>();
+        List<RedisServerClusterBean> list = new ArrayList<>();
 
         RedisPoolConfig poolConfig = new RedisPoolConfig();
         BeanUtils.copyProperties(redisProxyConfiguration.getRedisPool(),poolConfig);
@@ -75,18 +75,18 @@ public class ConsistentHashLoadBalanceTest {
        List<RedisProxyMaster> masters =redisProxyConfiguration.getGroupNode().get(0).getRedisMasters();
 
        for(RedisProxyMaster master : masters){
-           LBRedisServerBean redisServerBean = new LBRedisServerBean();
+           RedisServerBean redisServerBean = new RedisServerBean();
            redisServerBean.setRedisPoolConfig(poolConfig);
            redisServerBean.setHost(master.getHost());
            redisServerBean.setPort(master.getPort());
 
-           LBRedisServerClusterBean redisServerClusterBean=  new LBRedisServerClusterBean();
+           RedisServerClusterBean redisServerClusterBean=  new RedisServerClusterBean();
            redisServerClusterBean.setRedisServerMasterBean(redisServerBean);
 
            //slave
-           List<LBRedisServerBean> slaves = new ArrayList<>();
+           List<RedisServerBean> slaves = new ArrayList<>();
            for(RedisProxySlave slave :master.getRedisSlaves()){
-               LBRedisServerBean redisSlaveServerBean = new LBRedisServerBean();
+               RedisServerBean redisSlaveServerBean = new RedisServerBean();
                redisSlaveServerBean.setRedisPoolConfig(poolConfig);
                redisSlaveServerBean.setHost(slave.getHost());
                redisSlaveServerBean.setPort(slave.getPort());
@@ -99,7 +99,7 @@ public class ConsistentHashLoadBalanceTest {
 
 
 
-        LBRedisServerMasterCluster redisServerMasterCluster = new LBRedisServerMasterCluster(list);
+        RedisServerMasterCluster redisServerMasterCluster = new RedisServerMasterCluster(list);
 
         return redisServerMasterCluster;
 
@@ -129,9 +129,9 @@ public class ConsistentHashLoadBalanceTest {
 
         loadBalance.setFfanRedisServerMasterCluster(init());
 
-        LBRedisServerBean serverBean = loadBalance.select(redisQuestBean,null);
-        LBRedisServerBean serverBean1 = loadBalance.select(redisQuestBean,null);
-        LBRedisServerBean serverBean2 = loadBalance.select(redisQuestBean,null);
+        RedisServerBean serverBean = loadBalance.select(redisQuestBean,null);
+        RedisServerBean serverBean1 = loadBalance.select(redisQuestBean,null);
+        RedisServerBean serverBean2 = loadBalance.select(redisQuestBean,null);
 
         assertNotNull(serverBean);
         assertNotNull(serverBean1);
@@ -152,12 +152,12 @@ public class ConsistentHashLoadBalanceTest {
 
 
         loadBalance.setFfanRedisServerMasterCluster(init());
-       LBRedisServerBean redisServerBean= loadBalance.getFfanRedisServerMasterCluster().getMasters().get(0);
+       RedisServerBean redisServerBean= loadBalance.getFfanRedisServerMasterCluster().getMasters().get(0);
 
 
-        LBRedisServerBean serverBean = loadBalance.select(redisQuestBean,redisServerBean);
+        RedisServerBean serverBean = loadBalance.select(redisQuestBean,redisServerBean);
 
-        List<LBRedisServerBean> slaves=loadBalance.getFfanRedisServerMasterCluster().getMasterFfanRedisServerBean(redisServerBean.getKey());
+        List<RedisServerBean> slaves=loadBalance.getFfanRedisServerMasterCluster().getMasterFfanRedisServerBean(redisServerBean.getKey());
 
         assertNotNull(serverBean);
         assertTrue(slaves.contains(serverBean));

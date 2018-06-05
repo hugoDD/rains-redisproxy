@@ -1,6 +1,6 @@
 package com.rains.proxy.core.command.execute;
 
-import com.rains.proxy.core.bean.LBRedisServerMasterCluster;
+import com.rains.proxy.core.bean.RedisServerMasterCluster;
 import com.rains.proxy.core.client.impl.AbstractPoolClient;
 import com.rains.proxy.core.command.ICmdExecute;
 import com.rains.proxy.core.command.impl.RedisCommand;
@@ -18,7 +18,7 @@ import java.util.Map;
  */
 public class ServerCmdExecute extends ThrooughCmdExecute implements ICmdExecute {
 
-    public ServerCmdExecute(Map<String, AbstractPoolClient> redisServerBeanMap, LBRedisServerMasterCluster redisServerMasterCluster) {
+    public ServerCmdExecute(Map<String, AbstractPoolClient> redisServerBeanMap, RedisServerMasterCluster redisServerMasterCluster) {
         super(redisServerBeanMap, redisServerMasterCluster);
         cmdExecute.put(RedisCmdTypeEnums.Server, this);
 

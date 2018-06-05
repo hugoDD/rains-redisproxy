@@ -1,16 +1,32 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.rains.proxy.net.client;
 
 
 import com.rains.proxy.core.command.impl.RedisCommand;
 import com.rains.proxy.core.connection.IConnection;
-import com.rains.proxy.core.constants.LBRedisProxyErrorMsgConstant;
+import com.rains.proxy.core.constants.RedisProxyErrorMsgConstant;
 import com.rains.proxy.core.enums.ChannelState;
-import com.rains.proxy.core.exception.LBRedisProxyFrameworkException;
-import com.rains.proxy.core.pool.commons.LBRedisProxyPoolConfig;
+import com.rains.proxy.core.exception.RedisProxyFrameworkException;
+import com.rains.proxy.core.pool.commons.RedisProxyPoolConfig;
 import com.rains.proxy.core.protocol.RedisReplyDecoder;
 import com.rains.proxy.core.protocol.RedisRequestEncoder;
 import com.rains.proxy.core.reply.IRedisReply;
-import com.rains.proxy.net.client.suppot.LBRedisClientOutHandler;
+import com.rains.proxy.net.client.suppot.RedisClientOutHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -23,36 +39,45 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 
- * @author liubing
+ * @author dourx
+ * @version V1.0
+ * 创建日期 2018/6/4
+ *
+ * redis客户端连接
  *
  */
-public class LBRedisConnection implements IConnection {
+public class RedisConnection implements IConnection {
 	
-	private Logger logger = LoggerFactory.getLogger(LBRedisConnection.class);
+	private Logger logger = LoggerFactory.getLogger(RedisConnection.class);
 	
 	private volatile ChannelState state = ChannelState.UNINIT;
 
 	private Channel backChannel = null;
 
-	private LBRedisProxyPoolConfig lbRedisProxyPoolConfig;
+	private RedisProxyPoolConfig redisProxyPoolConfig;
 	
 	private Bootstrap bootstrap;
 	
 	private ChannelHandlerContext frontCtx;
 
+	private String host="127.0.0.1";
+
+	private int port =6379;
+
+	private long timeout=0;
+
 	/**
 	 * for test
 	 */
-	public LBRedisConnection() {
+	public RedisConnection() {
 	}
 
 	/**
-	 * @param lbRedisProxyPoolConfig
+	 * @param redisProxyPoolConfig
 	 */
-	public LBRedisConnection(LBRedisProxyPoolConfig lbRedisProxyPoolConfig) {
+	public RedisConnection(RedisProxyPoolConfig redisProxyPoolConfig) {
 		super();
-		this.lbRedisProxyPoolConfig = lbRedisProxyPoolConfig;
+		this.redisProxyPoolConfig = redisProxyPoolConfig;
 		initClientBootstrap();
 		open();
 	}
@@ -69,8 +94,8 @@ public class LBRedisConnection implements IConnection {
 			protected void initChannel(SocketChannel ch) throws Exception {
 				ch.pipeline().addLast("RedisReplyDecoder",new RedisReplyDecoder());
 				ch.pipeline().addLast("RedisRequestEncoder",new RedisRequestEncoder());
-				ch.pipeline().addLast("ClientInHandler",new LBRedisClientInHandler());
-				ch.pipeline().addLast("ClientOutHandler",new LBRedisClientOutHandler());
+				ch.pipeline().addLast("ClientInHandler",new RedisClientInHandler());
+				ch.pipeline().addLast("ClientOutHandler",new RedisClientOutHandler());
 			}
         	
         });
@@ -79,10 +104,10 @@ public class LBRedisConnection implements IConnection {
 		/* 实际上，极端情况下，connectTimeout会达到500ms，因为netty nio的实现中，是依赖BossThread来控制超时，
          如果为了严格意义的timeout，那么需要应用端进行控制。
 		 */
-        int timeout = lbRedisProxyPoolConfig.getConnectionTimeout();
+        int timeout = redisProxyPoolConfig.getConnectionTimeout();
         if (timeout <= 0) {
-            throw new LBRedisProxyFrameworkException("NettyClient init Error: timeout(" + timeout + ") <= 0 is forbid.",
-                    LBRedisProxyErrorMsgConstant.FRAMEWORK_INIT_ERROR);
+            throw new RedisProxyFrameworkException("NettyClient init Error: timeout(" + timeout + ") <= 0 is forbid.",
+                    RedisProxyErrorMsgConstant.FRAMEWORK_INIT_ERROR);
         }
         bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, timeout);
         open();
@@ -104,14 +129,14 @@ public class LBRedisConnection implements IConnection {
 	public boolean open() {
 		
 		try {
-			ChannelFuture channelFuture = bootstrap.connect(new InetSocketAddress(lbRedisProxyPoolConfig.getHost(),lbRedisProxyPoolConfig.getPort()));
+			ChannelFuture channelFuture = bootstrap.connect(new InetSocketAddress(redisProxyPoolConfig.getHost(), redisProxyPoolConfig.getPort()));
 
 			long start = System.currentTimeMillis();
 
-			int timeout = lbRedisProxyPoolConfig.getConnectionTimeout();
+			int timeout = redisProxyPoolConfig.getConnectionTimeout();
 			if (timeout <= 0) {
-	            throw new LBRedisProxyFrameworkException("Netty4Client init Error: timeout(" + timeout + ") <= 0 is forbid.",
-	                    LBRedisProxyErrorMsgConstant.FRAMEWORK_INIT_ERROR);
+	            throw new RedisProxyFrameworkException("Netty4Client init Error: timeout(" + timeout + ") <= 0 is forbid.",
+	                    RedisProxyErrorMsgConstant.FRAMEWORK_INIT_ERROR);
 			}
 			// 不去依赖于connectTimeout
 			boolean result = channelFuture.awaitUninterruptibly(timeout, TimeUnit.MILLISECONDS);
@@ -129,15 +154,15 @@ public class LBRedisConnection implements IConnection {
 
 			if (channelFuture.cause() != null) {
 				channelFuture.cancel(true);
-				throw new LBRedisProxyFrameworkException("NettyChannel failed to connect to server,,HOST:"+lbRedisProxyPoolConfig.getHost()+",port:"+lbRedisProxyPoolConfig.getPort()+ ", result: " + result + ", success: " + success + ", connected: " + connected, channelFuture.cause());
+				throw new RedisProxyFrameworkException("NettyChannel failed to connect to server,,HOST:"+ redisProxyPoolConfig.getHost()+",port:"+ redisProxyPoolConfig.getPort()+ ", result: " + result + ", success: " + success + ", connected: " + connected, channelFuture.cause());
 			} else {
 				channelFuture.cancel(true);
-                throw new LBRedisProxyFrameworkException("NettyChannel connect to server timeout ,HOST:"+lbRedisProxyPoolConfig.getHost()+",port:"+lbRedisProxyPoolConfig.getPort()+ ", cost: " + (System.currentTimeMillis() - start) + ", result: " + result + ", success: " + success + ", connected: " + connected);
+                throw new RedisProxyFrameworkException("NettyChannel connect to server timeout ,HOST:"+ redisProxyPoolConfig.getHost()+",port:"+ redisProxyPoolConfig.getPort()+ ", cost: " + (System.currentTimeMillis() - start) + ", result: " + result + ", success: " + success + ", connected: " + connected);
             }
-		} catch (LBRedisProxyFrameworkException e) {
+		} catch (RedisProxyFrameworkException e) {
 			throw e;
 		} catch (Exception e) {
-			throw new LBRedisProxyFrameworkException("NettyChannel failed to connect to server ", e);
+			throw new RedisProxyFrameworkException("NettyChannel failed to connect to server ", e);
 		}
 	}
 
@@ -161,7 +186,7 @@ public class LBRedisConnection implements IConnection {
 			}
 			
 		} catch (Exception e) {
-			logger.error("NettyChannel close Error,HOST:"+lbRedisProxyPoolConfig.getHost()+",port:"+lbRedisProxyPoolConfig.getPort(), e);
+			logger.error("NettyChannel close Error,HOST:"+ redisProxyPoolConfig.getHost()+",port:"+ redisProxyPoolConfig.getPort(), e);
 		}
 	}
 
@@ -178,38 +203,40 @@ public class LBRedisConnection implements IConnection {
 		return state.isAliveState();
 	}
 
-	public  LBRedisClientInHandler getRedisClientInHandler(){
-		return new LBRedisClientInHandler();
-	}
+
+
 
 	/**
+	 * @author dourx
+	 * @version V1.0
+	 * 创建日期 2018/6/4
 	 * 目标服务器写入客户端通道
-	 * @author liubing
-	 *
 	 */
-	private class LBRedisClientInHandler extends SimpleChannelInboundHandler<IRedisReply> {
+	private class RedisClientInHandler extends SimpleChannelInboundHandler<IRedisReply> {
 		
 
-		public LBRedisClientInHandler() {
+		public RedisClientInHandler() {
 			super();
 		}
 		
 		@Override
 		protected void channelRead0(ChannelHandlerContext ctx, final IRedisReply msg)
 				throws Exception {
-			logger.info("read");
-			frontCtx.writeAndFlush(msg, frontCtx.channel().voidPromise());
+			if(logger.isDebugEnabled()){
+				logger.debug("RedisClientInHandler");
+			}
+
+		//	frontCtx.writeAndFlush(msg, frontCtx.channel().voidPromise());
 
 			// Always write from the event loop, minimize the wakeup events
-//			frontCtx.channel().eventLoop().execute(new Runnable() {
-//
-//		        @Override
-//		        public void run() {
-//		          // Not interested in the channel promise
-//
-//		        	frontCtx.writeAndFlush(msg, frontCtx.channel().voidPromise());
-//		        }
-//		      });
+			frontCtx.channel().eventLoop().execute(new Runnable() {
+
+		        @Override
+		        public void run() {
+		          // Not interested in the channel promise
+		        	frontCtx.writeAndFlush(msg, frontCtx.channel().voidPromise());
+		        }
+		      });
 
 		}
 		

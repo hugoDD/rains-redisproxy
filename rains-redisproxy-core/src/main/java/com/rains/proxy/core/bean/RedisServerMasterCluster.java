@@ -1,11 +1,24 @@
 /**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.rains.proxy.core.bean;
 
 
-import com.rains.proxy.core.bean.support.LBRedisServerBean;
-import com.rains.proxy.core.bean.support.LBRedisServerClusterBean;
+import com.rains.proxy.core.bean.support.RedisServerBean;
+import com.rains.proxy.core.bean.support.RedisServerClusterBean;
 import com.rains.proxy.core.client.impl.AbstractPoolClient;
 import com.rains.proxy.core.cluster.LoadBalance;
 
@@ -15,32 +28,34 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
+
 /**
- * 多主
+ * @author dourx
+ * @version V1.0
+ * 创建日期 2018/6/5
  * 集群模式配置
- *
- * @author liubing
  */
-public class LBRedisServerMasterCluster implements Serializable {
+public class RedisServerMasterCluster implements Serializable {
 
     /**
      *
      */
     private static final long serialVersionUID = 8481358070088941073L;
 
-    private List<LBRedisServerClusterBean> redisServerClusterBeans = new ArrayList<LBRedisServerClusterBean>();
+    private List<RedisServerClusterBean> redisServerClusterBeans = new ArrayList<RedisServerClusterBean>();
 
-    private Map<String, LBRedisServerClusterBean> redisServerClusterBeanMap = new HashMap<String, LBRedisServerClusterBean>();// key 相当于 zk 路径,而不是值
+    private Map<String, RedisServerClusterBean> redisServerClusterBeanMap = new HashMap<String, RedisServerClusterBean>();// key 相当于 zk 路径,而不是值
 
     /**
      * 一主多从模式
      */
-    private Map<String, List<LBRedisServerBean>> masterClusters = new HashMap<String, List<LBRedisServerBean>>();// key 相当于 zk 路径,而不是值
+    private Map<String, List<RedisServerBean>> masterClusters = new HashMap<String, List<RedisServerBean>>();// key 相当于 zk 路径,而不是值
 
     /**
      * 主集合
      ***/
-    private List<LBRedisServerBean> masters = new ArrayList<LBRedisServerBean>();
+    private List<RedisServerBean> masters = new ArrayList<RedisServerBean>();
 
     private String redisProxyHost="127.0.0.1";//主机名
 
@@ -50,8 +65,8 @@ public class LBRedisServerMasterCluster implements Serializable {
 
     private Map<String, AbstractPoolClient> redisClientBeanMap = new HashMap<String, AbstractPoolClient>();//key 代表实际的值
 
-    public LBRedisServerMasterCluster(
-            List<LBRedisServerClusterBean> redisServerClusterBeans) {
+    public RedisServerMasterCluster(
+            List<RedisServerClusterBean> redisServerClusterBeans) {
         this.redisServerClusterBeans = redisServerClusterBeans;
         init();
     }
@@ -62,7 +77,7 @@ public class LBRedisServerMasterCluster implements Serializable {
     private void init() {
 
         if (redisServerClusterBeans != null && redisServerClusterBeans.size() > 0) {
-            for (LBRedisServerClusterBean ffanRedisServerClusterBean : redisServerClusterBeans) {
+            for (RedisServerClusterBean ffanRedisServerClusterBean : redisServerClusterBeans) {
                 masters.add(ffanRedisServerClusterBean.getRedisServerMasterBean());
                 redisServerClusterBeanMap.put(ffanRedisServerClusterBean.getRedisServerMasterBean().getKey(), ffanRedisServerClusterBean);
                 masterClusters.put(ffanRedisServerClusterBean.getRedisServerMasterBean().getKey(), ffanRedisServerClusterBean.getRedisServerSlaveBeans());
@@ -77,7 +92,7 @@ public class LBRedisServerMasterCluster implements Serializable {
      * @param key
      * @return
      */
-    public List<LBRedisServerBean> getMasterFfanRedisServerBean(String key) {
+    public List<RedisServerBean> getMasterFfanRedisServerBean(String key) {
         if (masterClusters != null && masterClusters.containsKey(key)) {
             return masterClusters.get(key);
         }
@@ -88,7 +103,7 @@ public class LBRedisServerMasterCluster implements Serializable {
     /**
      * @return the masters
      */
-    public List<LBRedisServerBean> getMasters() {
+    public List<RedisServerBean> getMasters() {
         return masters;
     }
 
@@ -96,14 +111,14 @@ public class LBRedisServerMasterCluster implements Serializable {
     /**
      * @param masters the masters to set
      */
-    public void setMasters(List<LBRedisServerBean> masters) {
+    public void setMasters(List<RedisServerBean> masters) {
         this.masters = masters;
     }
 
     /**
      * @return the redisServerClusterBeans
      */
-    public List<LBRedisServerClusterBean> getRedisServerClusterBeans() {
+    public List<RedisServerClusterBean> getRedisServerClusterBeans() {
         return redisServerClusterBeans;
     }
 
@@ -111,7 +126,7 @@ public class LBRedisServerMasterCluster implements Serializable {
      * @param redisServerClusterBeans the redisServerClusterBeans to set
      */
     public void setRedisServerClusterBeans(
-            List<LBRedisServerClusterBean> redisServerClusterBeans) {
+            List<RedisServerClusterBean> redisServerClusterBeans) {
         this.redisServerClusterBeans = redisServerClusterBeans;
     }
 
@@ -124,8 +139,8 @@ public class LBRedisServerMasterCluster implements Serializable {
         if (redisServerClusterBeanMap.containsKey(key)) {
             redisServerClusterBeanMap.remove(key);
         }
-        List<LBRedisServerBean> redisServerSlaveBeans = masterClusters.get(key);
-        for (LBRedisServerBean serverBean : redisServerSlaveBeans) {//删除不存在从的连接
+        List<RedisServerBean> redisServerSlaveBeans = masterClusters.get(key);
+        for (RedisServerBean serverBean : redisServerSlaveBeans) {//删除不存在从的连接
             if (redisClientBeanMap.containsKey(serverBean.getKey())) {
                 redisClientBeanMap.get(serverBean.getKey()).close();
                 redisClientBeanMap.remove(serverBean.getKey());
@@ -137,7 +152,7 @@ public class LBRedisServerMasterCluster implements Serializable {
             masterClusters.remove(key);
         }
 
-        for (LBRedisServerClusterBean redisServerClusterBean : redisServerClusterBeans) {//主存在，从不存在，删除对应的从
+        for (RedisServerClusterBean redisServerClusterBean : redisServerClusterBeans) {//主存在，从不存在，删除对应的从
             if (redisServerClusterBean.getRedisServerMasterBean().getKey().equals(key)) {
                 redisServerClusterBean.getRedisServerSlaveBeans().clear();
                 break;
@@ -145,7 +160,7 @@ public class LBRedisServerMasterCluster implements Serializable {
         }
     }
 
-    public LBRedisServerClusterBean getRedisServerClusterBean(String key) {
+    public RedisServerClusterBean getRedisServerClusterBean(String key) {
         if (redisServerClusterBeanMap.containsKey(key)) {
             return redisServerClusterBeanMap.get(key);
         }
@@ -198,7 +213,7 @@ public class LBRedisServerMasterCluster implements Serializable {
     /**
      * @return the ffanRedisServerClusterBeanMap
      */
-    public Map<String, LBRedisServerClusterBean> getRedisServerClusterBeanMap() {
+    public Map<String, RedisServerClusterBean> getRedisServerClusterBeanMap() {
         return redisServerClusterBeanMap;
     }
 
@@ -206,7 +221,7 @@ public class LBRedisServerMasterCluster implements Serializable {
      * @param redisServerClusterBeanMap the ffanRedisServerClusterBeanMap to set
      */
     public void setRedisServerClusterBeanMap(
-            Map<String, LBRedisServerClusterBean> redisServerClusterBeanMap) {
+            Map<String, RedisServerClusterBean> redisServerClusterBeanMap) {
         this.redisServerClusterBeanMap = redisServerClusterBeanMap;
     }
 
@@ -227,7 +242,7 @@ public class LBRedisServerMasterCluster implements Serializable {
     /**
      * @return the masterClusters
      */
-    public Map<String, List<LBRedisServerBean>> getMasterClusters() {
+    public Map<String, List<RedisServerBean>> getMasterClusters() {
         return masterClusters;
     }
 

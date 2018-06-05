@@ -41,7 +41,7 @@ public class RedisProxyConfigurationTest {
        assertEquals(5000,poolConfig.getConnectionTimeout());
        assertEquals(100,poolConfig.getMaxActiveConnection());
        assertEquals(80,poolConfig.getMaxIdleConnection());
-       assertEquals(10,poolConfig.getMinConnection());
+       assertEquals(3,poolConfig.getMinConnection());
        assertEquals(500,poolConfig.getMaxWaitMillisOnBorrow());
        assertEquals(5,poolConfig.getInitialConnection());
        assertEquals(60000,poolConfig.getTimeBetweenEvictionRunsMillis());

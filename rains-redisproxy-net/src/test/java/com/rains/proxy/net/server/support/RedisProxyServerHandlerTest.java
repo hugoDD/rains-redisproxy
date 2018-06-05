@@ -1,19 +1,14 @@
 package com.rains.proxy.net.server.support;
 
-import com.rains.proxy.core.bean.LBRedisServerMasterCluster;
+import com.rains.proxy.core.bean.RedisServerMasterCluster;
 import com.rains.proxy.core.command.impl.RedisCommand;
 import com.rains.proxy.core.enums.RedisCmdEnums;
-import com.rains.proxy.core.enums.Type;
-import com.rains.proxy.core.protocol.RedisReplyEncoder;
-import com.rains.proxy.core.protocol.RedisRequestDecoder;
 import com.rains.proxy.core.reply.IRedisReply;
 import com.rains.proxy.core.reply.impl.StatusRedisReply;
 import com.rains.proxy.net.RedisProxyConfigurationTest;
-import com.rains.proxy.net.server.LBRedisServer;
+import com.rains.proxy.net.server.RedisProxyServer;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.embedded.EmbeddedChannel;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,14 +32,14 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = RedisProxyConfigurationTest.class)
-public class LBRedisServerHandlerTest {
+public class RedisProxyServerHandlerTest {
 
     @Autowired
-    private LBRedisServerMasterCluster redisServerMasterCluster;
+    private RedisServerMasterCluster redisServerMasterCluster;
 
     @Before
     public void setUp() throws Exception {
-        LBRedisServer redisServer = new LBRedisServer(redisServerMasterCluster);
+        RedisProxyServer redisServer = new RedisProxyServer(redisServerMasterCluster);
     }
 
 

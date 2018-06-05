@@ -1,16 +1,14 @@
 package com.rains.proxy.core.command;
 
-import com.rains.proxy.core.bean.LBRedisServerMasterCluster;
+import com.rains.proxy.core.bean.RedisServerMasterCluster;
 import com.rains.proxy.core.client.impl.AbstractPoolClient;
 import com.rains.proxy.core.command.handler.NoThrooughCmdHandler;
 import com.rains.proxy.core.command.handler.ThrooughCmdHandler;
-import com.rains.proxy.core.command.impl.CommandParse;
 import com.rains.proxy.core.command.impl.RedisCommand;
 import com.rains.proxy.core.command.impl.RedisRequestPolicy;
 import com.rains.proxy.core.log.impl.LoggerUtils;
 import com.rains.proxy.core.reply.IRedisReply;
 import com.rains.proxy.core.reply.impl.ErrorRedisReply;
-import com.rains.proxy.core.reply.impl.StatusRedisReply;
 import com.rains.proxy.core.utils.ProtoUtils;
 import io.netty.channel.ChannelHandlerContext;
 import org.springframework.util.Assert;
@@ -35,7 +33,7 @@ public class RedisCommandControl {
 
     }
 
-    public RedisCommandControl(Map<String, AbstractPoolClient> redisServerBeanMap,LBRedisServerMasterCluster redisServerMasterCluster) {
+    public RedisCommandControl(Map<String, AbstractPoolClient> redisServerBeanMap,RedisServerMasterCluster redisServerMasterCluster) {
         noThrooughCmdHandler = new NoThrooughCmdHandler();
         throoughCmdHandler = new ThrooughCmdHandler(redisServerBeanMap,redisServerMasterCluster);
 
