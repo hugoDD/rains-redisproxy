@@ -5,6 +5,31 @@ language: java
 jdk:
   - oraclejdk8
 
+before_script:
+  - echo "MAVEN_OPTS='-Xms1024m -Xmx3072m -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=384m'" > ~/.mavenrc
+
+
+after_success:
+  - mvn clean test jacoco:report coveralls:report
+
+branches:
+  only:
+    - master
+
+env:
+  global:
+   - "MAVEN_OPTS=-Xms1024m -Xmx3072m -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=384m"
+
+addons:
+  coverity_scan:
+    project:
+      name: "hugo/rains-redisproxy"
+      description: "Build submitted via Travis CI"
+    notification_email: doudgut@hotmail.com
+    build_command_prepend: "mvn clean"
+    build_command: "mvn -DskipTests=true compile"
+    branch_pattern: master
+
 cache:
   directories:
   - $HOME/.m2
