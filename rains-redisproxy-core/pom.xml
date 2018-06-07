@@ -7,7 +7,6 @@
     <artifactId>rains-redisproxy</artifactId>
     <version>1.0.0-RELEASE</version>
   </parent>
-  <groupId>com.rains</groupId>
   <artifactId>rains-redisproxy-core</artifactId>
   <name>redis-proxy-core</name>
     <packaging>jar</packaging>
@@ -57,13 +56,11 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
-      <version>4.3.6.RELEASE</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version> 4.12</version>
       <scope>test</scope>
     </dependency>
 

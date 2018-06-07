@@ -4,15 +4,16 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>client-demo</artifactId>
-
-
     <parent>
         <groupId>com.rains</groupId>
-        <artifactId>rains-redisproxy</artifactId>
+        <artifactId>rains-redisproxy-sample</artifactId>
         <version>1.0.0-RELEASE</version>
     </parent>
 
+    <artifactId>client-demo</artifactId>
+    <name>client-demo</name>
+    <packaging>jar</packaging>
+    <version>1.0.0-RELEASE</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
