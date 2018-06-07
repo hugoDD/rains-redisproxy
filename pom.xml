@@ -574,7 +574,7 @@
         </pluginRepository>
     </pluginRepositories>
 
-    <distributionManagement>
+   <!-- <distributionManagement>
         <repository>
             <id>releases</id>
             <url>http://maven.wang-guanjia.com/nexus/content/repositories/releases</url>
@@ -583,7 +583,7 @@
             <id>snapshots</id>
             <url>http://maven.wang-guanjia.com/nexus/content/repositories/snapshots</url>
         </snapshotRepository>
-    </distributionManagement>
+    </distributionManagement>-->
 
 
 </project>
