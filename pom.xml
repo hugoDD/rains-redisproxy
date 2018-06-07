@@ -117,6 +117,8 @@
         <motan.version>1.0.0</motan.version>
         <curator-framework.version>2.12.0</curator-framework.version>
         <jmh.version>1.20</jmh.version>
+        <jacoco-maven-plugin.version>0.7.9</jacoco-maven-plugin.version>
+        <project.testresult.directory>${project.build.directory}/test-results</project.testresult.directory>
     </properties>
 
 
@@ -519,6 +521,48 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
                 <version>2.5</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <!-- Force alphabetical order to have a reproducible build -->
+                    <runOrder>alphabetical</runOrder>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>pre-unit-tests</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                        <configuration>
+                            <!-- Sets the path to the file which contains the execution data. -->
+                            <destFile>${project.testresult.directory}/coverage/jacoco/jacoco.exec</destFile>
+                        </configuration>
+                    </execution>
+                    <!-- Ensures that the code coverage report for unit tests is created after unit tests have been run -->
+                    <execution>
+                        <id>post-unit-test</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <configuration>
+                            <dataFile>${project.testresult.directory}/coverage/jacoco/jacoco.exec</dataFile>
+                            <outputDirectory>${project.testresult.directory}/coverage/jacoco</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.eluder.coveralls</groupId>
+                <artifactId>coveralls-maven-plugin</artifactId>
+                <version>4.3.0</version>
             </plugin>
         </plugins>
     </build>
