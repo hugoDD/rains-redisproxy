@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.rains</groupId>
+        <artifactId>rains-redisproxy</artifactId>
+        <version>1.0.0-RELEASE</version>
+    </parent>
+
+    <artifactId>rains-redisproxy-sample</artifactId>
+    <name>rains-redisproxy-sample</name>
+    <packaging>pom</packaging>
+
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+        </license>
+    </licenses>
+    <scm>
+        <url>https://github.com/hugoDD/rains-redisproxy.git</url>
+    </scm>
+
+
+
+    <modules>
+        <module>client-demo</module>
+        <module>server-demo</module>
+    </modules>
+
+
+    <developers>
+        <developer>
+            <id>hugosz</id>
+            <name>hugosz</name>
+            <email>doudgut@hotmail.com</email>
+            <organization>free</organization>
+            <roles>
+                <role>Developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>next</id>
+            <name>next</name>
+            <email>next@gmail.com</email>
+            <organization>free</organization>
+            <roles>
+                <role>Developer</role>
+            </roles>
+        </developer>
+    </developers>
+
+
+</project>
