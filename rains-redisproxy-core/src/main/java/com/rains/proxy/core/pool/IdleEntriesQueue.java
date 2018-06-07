@@ -35,15 +35,15 @@ public interface IdleEntriesQueue<T extends Pool> {
 	 *
 	 * @return
 	 */
-	PoolEntry<T> poll(long timeout) throws InterruptedException;
+	IPoolEntry<T> poll(long timeout) throws InterruptedException;
 	/**
 	 * 
 	 * @return
 	 */
-	PoolEntry<T> poll(long timeout, TimeUnit unit) throws InterruptedException;
+	IPoolEntry<T> poll(long timeout, TimeUnit unit) throws InterruptedException;
 	
 	
-	PoolEntry<T> poll();
+	IPoolEntry<T> poll();
 	
 	/**
 	 * 
@@ -51,7 +51,7 @@ public interface IdleEntriesQueue<T extends Pool> {
 	 * @return
 	 * @throws NullPointerException
 	 */
-	boolean offer(PoolEntry<T> entry) throws NullPointerException;
+	boolean offer(IPoolEntry<T> entry) throws NullPointerException;
 	
 	
 	public int getIdleEntriesCount();

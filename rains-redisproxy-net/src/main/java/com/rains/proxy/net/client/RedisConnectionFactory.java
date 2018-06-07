@@ -30,19 +30,25 @@ import com.rains.proxy.core.pool.exception.RedisProxyPoolException;
 public class RedisConnectionFactory implements PooledObjectFactory<IConnection> {
 	
 	private RedisProxyPoolConfig redisProxyPoolConfig;
-	
-	/**
-	 * 
-	 * @param redisProxyPoolConfig
-	 */
-	public RedisConnectionFactory(RedisProxyPoolConfig redisProxyPoolConfig) {
+
+	private String host="127.0.0.1";
+
+	private int port =6379;
+
+	private int timeout=0;
+
+	public RedisConnectionFactory(String host, int port, int timeout) {
 		super();
-		this.redisProxyPoolConfig = redisProxyPoolConfig;
+		this.host = host;
+		this.port = port;
+		this.timeout = timeout;
 	}
+
+
 
 	@Override
 	public IConnection createInstance() throws RedisProxyPoolException {
-		RedisConnection redisConnection=new RedisConnection(redisProxyPoolConfig);
+		RedisConnection redisConnection=new RedisConnection(host,port,timeout);
 		redisConnection.open();
 		return redisConnection;
 	}

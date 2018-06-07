@@ -17,7 +17,7 @@
 package com.rains.proxy.core.pool.impl;
 
 
-import com.rains.proxy.core.pool.PoolEntry;
+import com.rains.proxy.core.pool.IPoolEntry;
 import com.rains.proxy.core.pool.PoolEntryFactory;
 import com.rains.proxy.core.pool.PooledObjectFactory;
 import com.rains.proxy.core.pool.commons.Pool;
@@ -45,11 +45,11 @@ public class PoolBasicEntryFactory<T extends Pool> implements PoolEntryFactory<T
 
 
 	@Override
-	public PoolEntry<T> createPoolEntry() throws RedisProxyPoolException {
+	public IPoolEntry createPoolEntry() throws RedisProxyPoolException {
 		T object = null;
 		try {
 			object = rpcPooledObjectFactory.createInstance();
-			return new BasicPoolEntry<T>(object);
+			return new PoolEntry<T>(object);
 		} catch (RedisProxyPoolException e) {
 			throw e;
 		}

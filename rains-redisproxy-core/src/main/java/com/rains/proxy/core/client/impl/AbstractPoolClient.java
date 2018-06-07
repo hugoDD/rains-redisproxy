@@ -23,11 +23,11 @@ import com.rains.proxy.core.command.impl.RedisCommand;
 import com.rains.proxy.core.connection.IConnection;
 import com.rains.proxy.core.exception.RedisException;
 import com.rains.proxy.core.log.impl.LoggerUtils;
-import com.rains.proxy.core.pool.PoolEntry;
+import com.rains.proxy.core.pool.IPoolEntry;
 import com.rains.proxy.core.pool.PooledObjectFactory;
 import com.rains.proxy.core.pool.RedisProxyPool;
 import com.rains.proxy.core.pool.commons.RedisProxyPoolConfig;
-import com.rains.proxy.core.pool.impl.RedisProxyBasicPool;
+import com.rains.proxy.core.pool.exception.RedisProxyPoolException;
 import com.rains.proxy.core.pool.util.PoolUtils;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -67,8 +67,13 @@ public abstract class AbstractPoolClient implements Client {
     
     public abstract void write(RedisCommand request, ChannelHandlerContext frontCtx);
     
-    protected PoolEntry<IConnection> borrowObject() throws Exception {
-    	PoolEntry<IConnection> nettyChannelEntry=pool.borrowEntry();
+    protected IPoolEntry<IConnection> borrowObject() throws Exception {
+        if(pool==null){
+            LoggerUtils.error("borrowObject Error : pool is null ");
+            throw new RedisException("borrowObject Error : pool is null ");
+        }
+
+    	IPoolEntry<IConnection> nettyChannelEntry=pool.borrowEntry();
         if (nettyChannelEntry != null&&nettyChannelEntry.getObject()!=null) {
             return nettyChannelEntry;
         }
@@ -79,13 +84,13 @@ public abstract class AbstractPoolClient implements Client {
     }
 
 
-    protected void returnObject(PoolEntry<IConnection> entry) {
+    protected void returnObject(IPoolEntry<IConnection> entry) {
         if (entry == null) {
             return;
         }
         try {
         	pool.returnEntry(entry);
-        } catch (Exception ie) {
+        } catch (RedisProxyPoolException ie) {
         	LoggerUtils.error( "{} return client Error" ,this.getClass().getSimpleName() , ie);
         }
     }

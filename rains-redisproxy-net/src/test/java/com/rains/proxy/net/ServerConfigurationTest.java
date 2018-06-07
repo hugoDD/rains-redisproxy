@@ -61,7 +61,7 @@ public class ServerConfigurationTest {
         LoadBalance loadBalance = redisServerMasterCluster.getLoadMasterBalance();
         List<RedisServerBean> slaves = redisServerMasterCluster.getMasterFfanRedisServerBean(masters.get(0).getKey());
 
-       assertEquals(2,masters.size());
+       assertEquals(1,masters.size());
        assertEquals(2,slaves.size());
        assertTrue(loadBalance instanceof  ConsistentHashLoadBalance);
 

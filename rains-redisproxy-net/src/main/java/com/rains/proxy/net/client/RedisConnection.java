@@ -54,7 +54,7 @@ public class RedisConnection implements IConnection {
 
 	private Channel backChannel = null;
 
-	private RedisProxyPoolConfig redisProxyPoolConfig;
+
 	
 	private Bootstrap bootstrap;
 	
@@ -64,20 +64,15 @@ public class RedisConnection implements IConnection {
 
 	private int port =6379;
 
-	private long timeout=0;
+	private int timeout=0;
 
-	/**
-	 * for test
-	 */
-	public RedisConnection() {
-	}
 
-	/**
-	 * @param redisProxyPoolConfig
-	 */
-	public RedisConnection(RedisProxyPoolConfig redisProxyPoolConfig) {
+
+	public RedisConnection(String host,int port ,int timeout) {
 		super();
-		this.redisProxyPoolConfig = redisProxyPoolConfig;
+		this.host = host;
+		this.port = port;
+		this.timeout = timeout;
 		initClientBootstrap();
 		open();
 	}
@@ -91,7 +86,7 @@ public class RedisConnection implements IConnection {
         NioEventLoopGroup group = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors());
         bootstrap.group(group).channel(NioSocketChannel.class).handler(new  ChannelInitializer<SocketChannel>() {
 			@Override
-			protected void initChannel(SocketChannel ch) throws Exception {
+			protected void initChannel(SocketChannel ch)  {
 				ch.pipeline().addLast("RedisReplyDecoder",new RedisReplyDecoder());
 				ch.pipeline().addLast("RedisRequestEncoder",new RedisRequestEncoder());
 				ch.pipeline().addLast("ClientInHandler",new RedisClientInHandler());
@@ -104,7 +99,7 @@ public class RedisConnection implements IConnection {
 		/* 实际上，极端情况下，connectTimeout会达到500ms，因为netty nio的实现中，是依赖BossThread来控制超时，
          如果为了严格意义的timeout，那么需要应用端进行控制。
 		 */
-        int timeout = redisProxyPoolConfig.getConnectionTimeout();
+//        int timeout = redisProxyPoolConfig.getConnectionTimeout();
         if (timeout <= 0) {
             throw new RedisProxyFrameworkException("NettyClient init Error: timeout(" + timeout + ") <= 0 is forbid.",
                     RedisProxyErrorMsgConstant.FRAMEWORK_INIT_ERROR);
@@ -129,11 +124,11 @@ public class RedisConnection implements IConnection {
 	public boolean open() {
 		
 		try {
-			ChannelFuture channelFuture = bootstrap.connect(new InetSocketAddress(redisProxyPoolConfig.getHost(), redisProxyPoolConfig.getPort()));
+			ChannelFuture channelFuture = bootstrap.connect(new InetSocketAddress(host,port));
 
 			long start = System.currentTimeMillis();
 
-			int timeout = redisProxyPoolConfig.getConnectionTimeout();
+//			int timeout = redisProxyPoolConfig.getConnectionTimeout();
 			if (timeout <= 0) {
 	            throw new RedisProxyFrameworkException("Netty4Client init Error: timeout(" + timeout + ") <= 0 is forbid.",
 	                    RedisProxyErrorMsgConstant.FRAMEWORK_INIT_ERROR);
@@ -154,10 +149,10 @@ public class RedisConnection implements IConnection {
 
 			if (channelFuture.cause() != null) {
 				channelFuture.cancel(true);
-				throw new RedisProxyFrameworkException("NettyChannel failed to connect to server,,HOST:"+ redisProxyPoolConfig.getHost()+",port:"+ redisProxyPoolConfig.getPort()+ ", result: " + result + ", success: " + success + ", connected: " + connected, channelFuture.cause());
+				throw new RedisProxyFrameworkException("NettyChannel failed to connect to server,,HOST:"+host+",port:"+ port+ ", result: " + result + ", success: " + success + ", connected: " + connected, channelFuture.cause());
 			} else {
 				channelFuture.cancel(true);
-                throw new RedisProxyFrameworkException("NettyChannel connect to server timeout ,HOST:"+ redisProxyPoolConfig.getHost()+",port:"+ redisProxyPoolConfig.getPort()+ ", cost: " + (System.currentTimeMillis() - start) + ", result: " + result + ", success: " + success + ", connected: " + connected);
+                throw new RedisProxyFrameworkException("NettyChannel connect to server timeout ,HOST:"+host+",port:"+ port+ ", cost: " + (System.currentTimeMillis() - start) + ", result: " + result + ", success: " + success + ", connected: " + connected);
             }
 		} catch (RedisProxyFrameworkException e) {
 			throw e;
@@ -186,7 +181,7 @@ public class RedisConnection implements IConnection {
 			}
 			
 		} catch (Exception e) {
-			logger.error("NettyChannel close Error,HOST:"+ redisProxyPoolConfig.getHost()+",port:"+ redisProxyPoolConfig.getPort(), e);
+			logger.error("NettyChannel close Error,HOST:{},port:{}",host,port, e);
 		}
 	}
 
@@ -221,7 +216,7 @@ public class RedisConnection implements IConnection {
 		
 		@Override
 		protected void channelRead0(ChannelHandlerContext ctx, final IRedisReply msg)
-				throws Exception {
+				 {
 			if(logger.isDebugEnabled()){
 				logger.debug("RedisClientInHandler");
 			}
@@ -229,21 +224,18 @@ public class RedisConnection implements IConnection {
 		//	frontCtx.writeAndFlush(msg, frontCtx.channel().voidPromise());
 
 			// Always write from the event loop, minimize the wakeup events
-			frontCtx.channel().eventLoop().execute(new Runnable() {
+			frontCtx.channel().eventLoop().execute(()->{
+				// Not interested in the channel promise
+				frontCtx.writeAndFlush(msg, frontCtx.channel().voidPromise());
+			});
 
-		        @Override
-		        public void run() {
-		          // Not interested in the channel promise
-		        	frontCtx.writeAndFlush(msg, frontCtx.channel().voidPromise());
-		        }
-		      });
+
 
 		}
 		
 		@Override
 		public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
 				throws Exception {
-			
 			super.exceptionCaught(ctx, cause);
 		}
 	}

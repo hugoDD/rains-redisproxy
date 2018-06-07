@@ -31,15 +31,15 @@ import java.util.concurrent.TimeoutException;
 public interface RedisProxyPool<T  extends Pool> {
 
 
-	PoolEntry<T> borrowEntry() throws InterruptedException, TimeoutException,RedisProxyPoolException;
+	IPoolEntry<T> borrowEntry() throws InterruptedException, TimeoutException,RedisProxyPoolException;
 
-	PoolEntry<T> borrowEntry(boolean createNew) throws InterruptedException,
+	IPoolEntry<T> borrowEntry(boolean createNew) throws InterruptedException,
 			TimeoutException, RedisProxyPoolException;
 
-	PoolEntry<T> borrowEntry(boolean createNew, long timeout, TimeUnit unit)
+	IPoolEntry<T> borrowEntry(boolean createNew, long timeout, TimeUnit unit)
 			throws InterruptedException, TimeoutException, RedisProxyPoolException;
 
-	void returnEntry(PoolEntry<T> entry) throws RedisProxyPoolException;
+	void returnEntry(IPoolEntry<T> entry) throws RedisProxyPoolException;
 	
 	void shutDown()throws RedisProxyPoolException;
 }

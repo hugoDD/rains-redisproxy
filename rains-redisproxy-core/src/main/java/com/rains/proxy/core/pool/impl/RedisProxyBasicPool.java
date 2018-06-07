@@ -17,7 +17,7 @@
 package com.rains.proxy.core.pool.impl;
 
 
-import com.rains.proxy.core.pool.PoolEntry;
+import com.rains.proxy.core.pool.IPoolEntry;
 import com.rains.proxy.core.pool.IdleEntriesQueue;
 import com.rains.proxy.core.pool.RedisProxyPool;
 import com.rains.proxy.core.pool.PoolEntryFactory;
@@ -65,15 +65,15 @@ public class RedisProxyBasicPool<T extends Pool> implements RedisProxyPool<T> {
 	    }
 	}
 	
-	private PoolEntry<T> createIdleEntry() throws Exception {
-		PoolEntry<T> entry= entryFactory.createPoolEntry();
+	private IPoolEntry<T> createIdleEntry() throws Exception {
+		IPoolEntry<T> entry= entryFactory.createPoolEntry();
 		return entry;
 	}
 	
 
 
 	@Override
-	public PoolEntry<T> borrowEntry() throws InterruptedException,
+	public IPoolEntry<T> borrowEntry() throws InterruptedException,
 			TimeoutException, RedisProxyPoolException {
 		if(idleEntriesQueue.getIdleEntriesCount()>0){//连接池足够
 			return borrowEntry(false,config.getMaxWaitMillisOnBorrow(), TimeUnit.MILLISECONDS);
@@ -87,7 +87,7 @@ public class RedisProxyBasicPool<T extends Pool> implements RedisProxyPool<T> {
 	 * 阻塞，默认系统的等待时间
 	 */
 	@Override
-	public PoolEntry<T> borrowEntry(boolean createNew) throws InterruptedException, TimeoutException, RedisProxyPoolException {
+	public IPoolEntry<T> borrowEntry(boolean createNew) throws InterruptedException, TimeoutException, RedisProxyPoolException {
 			return innerBorrowEntry(createNew,config.getMaxWaitMillisOnBorrow(),TimeUnit.MILLISECONDS);
 	}
 
@@ -95,16 +95,16 @@ public class RedisProxyBasicPool<T extends Pool> implements RedisProxyPool<T> {
 	 * 阻塞，默认设置的等待时间
 	 */
 	@Override
-	public PoolEntry<T> borrowEntry(boolean createNew, long timeout,
-									TimeUnit unit) throws InterruptedException, TimeoutException,
+	public IPoolEntry<T> borrowEntry(boolean createNew, long timeout,
+                                     TimeUnit unit) throws InterruptedException, TimeoutException,
             RedisProxyPoolException {
 
 		return innerBorrowEntry(createNew,timeout,TimeUnit.MILLISECONDS);
 	}
 	
-	private PoolEntry<T> innerBorrowEntry(boolean createNew, long timeout, TimeUnit unit) throws RedisProxyPoolException {
+	private IPoolEntry<T> innerBorrowEntry(boolean createNew, long timeout, TimeUnit unit) throws RedisProxyPoolException {
 		try {
-			PoolEntry<T> entry = idleEntriesQueue.poll();
+			IPoolEntry<T> entry = idleEntriesQueue.poll();
 
 			if (entry == null && createNew) {
 				increaseObjects(1);
@@ -131,7 +131,7 @@ public class RedisProxyBasicPool<T extends Pool> implements RedisProxyPool<T> {
 	 * @param entry
 	 * @throws RedisProxyPoolException
 	 */
-	public synchronized void decreaseObject(PoolEntry<T> entry) throws RedisProxyPoolException {
+	public synchronized void decreaseObject(IPoolEntry<T> entry) throws RedisProxyPoolException {
 		entry.getState().setValid(false);
 		entryFactory.destroyEntry(entry.getObject());
 		totalCount--;
@@ -160,7 +160,7 @@ public class RedisProxyBasicPool<T extends Pool> implements RedisProxyPool<T> {
 	
 
 	@Override
-	public void returnEntry(PoolEntry<T> entry)
+	public void returnEntry(IPoolEntry<T> entry)
 			throws RedisProxyPoolException {
 		if (entry == null){
 			throw new NullPointerException("returnEntry, entry is null");
@@ -178,7 +178,7 @@ public class RedisProxyBasicPool<T extends Pool> implements RedisProxyPool<T> {
 	public void shutDown() throws RedisProxyPoolException {
 		
         while (this.idleEntriesQueue.getIdleEntriesCount() > 0) {
-        	PoolEntry<T> entry = idleEntriesQueue.poll();
+        	IPoolEntry<T> entry = idleEntriesQueue.poll();
             if (entry != null) {
                 decreaseObject(entry);
             }
@@ -193,7 +193,7 @@ public class RedisProxyBasicPool<T extends Pool> implements RedisProxyPool<T> {
         	return;
         }
         long now = System.currentTimeMillis();
-        PoolEntry<T> entry;
+        IPoolEntry<T> entry;
         while (delta > 0 &&idleEntriesQueue.getIdleEntriesCount()>config.getMinIdleEntries()&& (entry = idleEntriesQueue.poll()) != null) {
             if (now - entry.getState().getLastValidatedAt() > config.getMinEvictableIdleTimeMillis()) {
                 decreaseObject(entry); // shrink the pool size if the object reaches minEvictableIdleTimeMillis

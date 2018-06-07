@@ -52,17 +52,17 @@ public class RedisServerHandler extends ChannelInboundHandlerAdapter {
     private Logger logger = LoggerFactory.getLogger(RedisServerHandler.class);
 
 
-    private Map<String, AbstractPoolClient> ffanRedisServerBeanMap;
+    private Map<String, AbstractPoolClient> redisServerBeanMap;
 
-    private RedisServerMasterCluster ffanRedisServerMasterCluster;
+    private RedisServerMasterCluster redisServerMasterCluster;
 
     private RedisCommandControl redisCommandControl;
 
 
-    public RedisServerHandler(Map<String, AbstractPoolClient> ffanRedisServerBeanMap, RedisServerMasterCluster ffanRedisServerMasterCluster) {
-        this.ffanRedisServerMasterCluster = ffanRedisServerMasterCluster;
-        this.ffanRedisServerBeanMap = ffanRedisServerBeanMap;
-        redisCommandControl = new RedisCommandControl(ffanRedisServerBeanMap, ffanRedisServerMasterCluster);
+    public RedisServerHandler(Map<String, AbstractPoolClient> redisServerBeanMap, RedisServerMasterCluster redisServerMasterCluster) {
+        this.redisServerMasterCluster = redisServerMasterCluster;
+        this.redisServerBeanMap = redisServerBeanMap;
+        redisCommandControl = new RedisCommandControl(redisServerBeanMap, redisServerMasterCluster);
     }
 
     @Override
@@ -88,7 +88,7 @@ public class RedisServerHandler extends ChannelInboundHandlerAdapter {
 
         IRedisReply redisReply = redisCommandControl.action((RedisCommand)msg,ctx);
         if (redisReply.getType() != Type.EMPTY) {
-            ctx.writeAndFlush(redisReply);
+            ctx.writeAndFlush(redisReply,ctx.voidPromise());
 
         }
 //        if (request.getPolicy().isNotThrough()) {
@@ -113,8 +113,8 @@ public class RedisServerHandler extends ChannelInboundHandlerAdapter {
 //                            ffanRedisClient.write(request,ctx);
 //                        }
 //                    }else if(request!=null&&request.getArgs().size()>1&&command.equals(RedisConstants.KEYS)){//keys 级别 找主
-//                        if(ffanRedisServerMasterCluster.getMasters().size()==1){
-//                            AbstractPoolClient ffanRedisClient=ffanRedisServerBeanMap.get(ffanRedisServerMasterCluster.getMasters().get(0).getKey());
+//                        if(redisServerMasterCluster.getMasters().size()==1){
+//                            AbstractPoolClient ffanRedisClient=redisServerBeanMap.get(redisServerMasterCluster.getMasters().get(0).getKey());
 //                            ffanRedisClient.write(request,ctx);
 //                        }else{
 //                            ctx.channel().writeAndFlush(new ErrorRedisReply(ProtoUtils.buildErrorReplyBytes("not support command:"+command)));
@@ -122,9 +122,9 @@ public class RedisServerHandler extends ChannelInboundHandlerAdapter {
 //
 //                    }
                     /*else if(command.equals(RedisConstants.INFO)){//info 级别
-			    	if(ffanRedisServerBeanMap.size()==1){
-			    		for(String key:ffanRedisServerBeanMap.keySet()){
-				    		AbstractPoolClient ffanRedisClient=ffanRedisServerBeanMap.get(key);
+			    	if(redisServerBeanMap.size()==1){
+			    		for(String key:redisServerBeanMap.keySet()){
+				    		AbstractPoolClient ffanRedisClient=redisServerBeanMap.get(key);
 				    		ffanRedisClient.write(request,ctx);
 				    	}
 			    	}else{
@@ -139,66 +139,7 @@ public class RedisServerHandler extends ChannelInboundHandlerAdapter {
 
     }
 
-    /**
-     * 根据参数获取枚举类
-     * @param command
-     * @return
-     */
-    private RedisCommandEnums getRedisCommandEnums(String command) {
-        try {
-            return RedisCommandEnums.valueOf(command.toUpperCase());
-        } catch (Exception e) {
-            return null;
-        }
-    }
 
-    /**
-     * 读写分离， 从采用权重算法
-     * @param request
-     * @param command
-     * @return
-     */
-    private AbstractPoolClient getShardClusterFfanRedisClient(RedisCommand request, String command, boolean flag) {
-        RedisQuestBean redisQuestBean = new RedisQuestBean(new String(request.getArgs().get(0)), request.getArgs().get(1), true);
-        LoadBalance loadMasterBalance = ffanRedisServerMasterCluster.getLoadMasterBalance();
-        RedisServerBean ffanRedisServerBean = loadMasterBalance.select(redisQuestBean, null);
-        List<RedisServerBean> ffanRedisServerBeans = ffanRedisServerMasterCluster.getMasterFfanRedisServerBean(ffanRedisServerBean.getKey());
-        if (ffanRedisServerBeans != null && ffanRedisServerBeans.size() > 0) {
-            RedisServerClusterBean redisServerClusterBean = ffanRedisServerMasterCluster.getRedisServerClusterBean(ffanRedisServerBean.getKey());
-            if (redisServerClusterBean != null) {
-                LoadBalance loadClusterBalance = redisServerClusterBean.getLoadClusterBalance();
-                loadClusterBalance.setFfanRedisServerMasterCluster(ffanRedisServerMasterCluster);
-                redisQuestBean.setWrite(flag);
-                RedisServerBean ffanClusterRedisServerBean = loadClusterBalance.select(redisQuestBean, ffanRedisServerBean);
-                if (ffanClusterRedisServerBean != null) {
-                    String key = ffanClusterRedisServerBean.getKey();
-                    return ffanRedisServerBeanMap.get(key);
-                }
-            }
-        }
-        String key = ffanRedisServerBean.getKey();
-        return ffanRedisServerBeanMap.get(key);
-
-    }
-
-    /**
-     * 一致性hash算法 主
-     * @param request
-     * @return
-     */
-    private AbstractPoolClient getShardFfanRedisClient(RedisCommand request, String command) {
-        RedisQuestBean redisQuestBean = new RedisQuestBean(new String(request.getArgs().get(0)), request.getArgs().get(1), true);
-        String key = null;
-        if (ffanRedisServerMasterCluster.getMasters().size() == 1) {
-            key = ffanRedisServerMasterCluster.getMasters().get(0).getKey();
-        } else {
-            LoadBalance loadMasterBalance = ffanRedisServerMasterCluster.getLoadMasterBalance();
-            RedisServerBean ffanRedisServerBean = loadMasterBalance.select(redisQuestBean, null);
-            key = ffanRedisServerBean.getKey();
-        }
-
-        return ffanRedisServerBeanMap.get(key);
-    }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {

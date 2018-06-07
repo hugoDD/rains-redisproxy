@@ -17,7 +17,7 @@
 package com.rains.proxy.core.pool.impl;
 
 
-import com.rains.proxy.core.pool.PoolEntry;
+import com.rains.proxy.core.pool.IPoolEntry;
 import com.rains.proxy.core.pool.IdleEntriesQueue;
 import com.rains.proxy.core.pool.commons.Pool;
 
@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class PoolBasicIdleEntriesQueue<T extends Pool> implements IdleEntriesQueue<T> {
 	
-	private final ArrayBlockingQueue<PoolEntry<T>> idleEntries;
+	private final ArrayBlockingQueue<IPoolEntry<T>> idleEntries;
 	
 
 
@@ -43,21 +43,21 @@ public class PoolBasicIdleEntriesQueue<T extends Pool> implements IdleEntriesQue
 	}
 
 	@Override
-	public PoolEntry<T> poll(long timeout) throws InterruptedException {
+	public IPoolEntry<T> poll(long timeout) throws InterruptedException {
 
-		PoolEntry<T> idle = idleEntries.poll(timeout,TimeUnit.MILLISECONDS);
+		IPoolEntry<T> idle = idleEntries.poll(timeout,TimeUnit.MILLISECONDS);
 		return idle;
 	}
 	
 	@Override
-	public PoolEntry<T> poll(long timeout, TimeUnit unit) throws InterruptedException {
+	public IPoolEntry<T> poll(long timeout, TimeUnit unit) throws InterruptedException {
 		
-		PoolEntry<T> idle = idleEntries.poll(timeout,unit);
+		IPoolEntry<T> idle = idleEntries.poll(timeout,unit);
 		return idle;	
 	}
 
 	@Override
-	public boolean offer(PoolEntry<T> entry) throws NullPointerException {
+	public boolean offer(IPoolEntry<T> entry) throws NullPointerException {
 		if (entry == null)
 			throw new NullPointerException("entry is null.");
 
@@ -65,7 +65,7 @@ public class PoolBasicIdleEntriesQueue<T extends Pool> implements IdleEntriesQue
 		return offerSuccessful;
 	}
 
-//	protected ArrayBlockingQueue<PoolEntry<T>> getIdleEntries() {
+//	protected ArrayBlockingQueue<IPoolEntry<T>> getIdleEntries() {
 //		return idleEntries;
 //	}
 
@@ -81,8 +81,8 @@ public class PoolBasicIdleEntriesQueue<T extends Pool> implements IdleEntriesQue
 	}
 
 	@Override
-	public PoolEntry<T> poll() {
-		PoolEntry<T> idle = idleEntries.poll();
+	public IPoolEntry<T> poll() {
+		IPoolEntry<T> idle = idleEntries.poll();
 		return idle;
 	}
 	

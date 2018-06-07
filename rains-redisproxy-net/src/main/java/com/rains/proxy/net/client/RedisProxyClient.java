@@ -20,7 +20,7 @@ package com.rains.proxy.net.client;
 import com.rains.proxy.core.client.impl.AbstractPoolClient;
 import com.rains.proxy.core.command.impl.RedisCommand;
 import com.rains.proxy.core.connection.IConnection;
-import com.rains.proxy.core.pool.PoolEntry;
+import com.rains.proxy.core.pool.IPoolEntry;
 import com.rains.proxy.core.pool.PooledObjectFactory;
 import com.rains.proxy.core.pool.commons.RedisProxyPoolConfig;
 import io.netty.channel.ChannelHandlerContext;
@@ -67,13 +67,13 @@ public class RedisProxyClient extends AbstractPoolClient {
 	 */
 	@Override
 	protected PooledObjectFactory<IConnection> createChannelFactory() {
-		return new RedisConnectionFactory(super.redisProxyPoolConfig);
+		return new RedisConnectionFactory(redisProxyPoolConfig.getHost(),redisProxyPoolConfig.getPort(),redisProxyPoolConfig.getConnectionTimeout());
 	}
     
 	@Override
 	public void write(RedisCommand request, ChannelHandlerContext frontCtx) {
 		IConnection connection=null;
-		PoolEntry<IConnection> entry=null;
+		IPoolEntry<IConnection> entry=null;
 		try{
 			entry  = borrowObject();
         	if(entry==null||entry.getObject()==null){

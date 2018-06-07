@@ -29,7 +29,7 @@ import com.rains.proxy.core.pool.exception.RedisProxyPoolException;
  */
 public interface PoolEntryFactory<T extends Pool> {
 	
-	PoolEntry<T> createPoolEntry() throws RedisProxyPoolException;
+	IPoolEntry<T> createPoolEntry() throws RedisProxyPoolException;
 	
 	/**
 	 * 销废

@@ -14,22 +14,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rains.proxy.core.pool;
+package com.rains.proxy.core.pool.impl;
 
+
+import com.rains.proxy.core.pool.IPoolEntry;
 import com.rains.proxy.core.pool.commons.RedisProxyPoolEntryState;
 import com.rains.proxy.core.pool.commons.Pool;
+
 
 
 /**
  * @author dourx
  * @version V1.0
  * 创建日期 2018/6/4
- * 对象T接口封装
+ * 对象T 封装
  */
-public interface PoolEntry<T extends Pool> {
+public class PoolEntry<T extends Pool> implements IPoolEntry<T> {
 	
-	T getObject();
+	private final T object;
+	
+	private final RedisProxyPoolEntryState state;
+	
+	public PoolEntry(T object) {
+		super();
+		this.object = object;
+		this.state = new RedisProxyPoolEntryState();
+	}
 
-	
-	RedisProxyPoolEntryState getState();
+
+	@Override
+	public T getObject() {
+		return object;
+	}
+
+
+	@Override
+	public RedisProxyPoolEntryState getState() {
+		return state;
+	}
+
 }

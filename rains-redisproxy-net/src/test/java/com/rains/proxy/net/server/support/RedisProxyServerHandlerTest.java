@@ -55,15 +55,15 @@ public class RedisProxyServerHandlerTest {
         EmbeddedChannel channel = new EmbeddedChannel(new RedisServerHandler(redisServerMasterCluster.getRedisClientBeanMap(),redisServerMasterCluster));
         assertTrue(channel.writeInbound(redisCommand));
         assertTrue(channel.finish());
-        IRedisReply redisReply =channel.readInbound();
+        IRedisReply redisReply =channel.readOutbound();
         assertNotNull(redisReply);
         assertTrue(redisReply instanceof StatusRedisReply);
 
-         redisCommand = getRedisCommand("info");
+         redisCommand = getRedisCommand("SELECT 1");
          channel = new EmbeddedChannel(new RedisServerHandler(redisServerMasterCluster.getRedisClientBeanMap(),redisServerMasterCluster));
         assertTrue(channel.writeInbound(redisCommand));
         assertTrue(channel.finish());
-         redisReply =channel.readInbound();
+         redisReply =channel.readOutbound();
         assertNotNull(redisReply);
         assertTrue(redisReply instanceof StatusRedisReply);
 
