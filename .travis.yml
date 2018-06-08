@@ -23,7 +23,7 @@ env:
 addons:
   coverity_scan:
     project:
-      name: "hugo/rains-redisproxy"
+      name: "hugoDD/rains-redisproxy"
       description: "Build submitted via Travis CI"
     notification_email: doudgut@hotmail.com
     build_command_prepend: "mvn clean"
