@@ -8,8 +8,8 @@ jdk:
 #before_script:
 #  - echo "MAVEN_OPTS='-Xms1024m -Xmx3072m -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=384m'" > ~/.mavenrc
 
-#after_success:
- # - mvn clean test jacoco:report coveralls:report
+after_success:
+ - mvn clean test  coveralls:report
 
 branches:
   only:
