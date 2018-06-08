@@ -19,10 +19,10 @@ package com.rains.proxy.net.client;
 
 import com.rains.proxy.core.client.impl.AbstractPoolClient;
 import com.rains.proxy.core.command.impl.RedisCommand;
-import com.rains.proxy.core.config.RedisProxyPool;
+import com.rains.proxy.core.config.RedisProxyPoolConfig;
 import com.rains.proxy.core.connection.IConnection;
 import com.rains.proxy.core.pool.IPoolEntry;
-import com.rains.proxy.core.pool.PooledObjectFactory;
+import com.rains.proxy.core.pool.PooledFactory;
 import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,13 +39,19 @@ public class RedisProxyClient extends AbstractPoolClient {
 
 	private Logger logger = LoggerFactory.getLogger(RedisProxyClient.class);
 	
-	private RedisProxyPool redisProxyPoolConfig;
+	private RedisProxyPoolConfig redisProxyPoolConfig;
+
+	private int port;
+
+	private String redisHost;
 
 	/**
 	 * @param redisProxyPoolConfig
 	 */
-	public RedisProxyClient(RedisProxyPool redisProxyPoolConfig) {
+	public RedisProxyClient(String redisHost,int port,RedisProxyPoolConfig redisProxyPoolConfig) {
 		 super(redisProxyPoolConfig);
+		 this.redisHost = redisHost;
+		 this.port = port;
 		 this.redisProxyPoolConfig = redisProxyPoolConfig;
 		 super.initPool();//初始化连接池
 	}
@@ -66,7 +72,7 @@ public class RedisProxyClient extends AbstractPoolClient {
 	 * 创建对象
 	 */
 	@Override
-	protected PooledObjectFactory<IConnection> createChannelFactory() {
+	protected PooledFactory<IConnection> createChannelFactory() {
 		return new RedisConnectionFactory(redisProxyPoolConfig.getHost(),redisProxyPoolConfig.getPort(),redisProxyPoolConfig.getConnectionTimeout());
 	}
     

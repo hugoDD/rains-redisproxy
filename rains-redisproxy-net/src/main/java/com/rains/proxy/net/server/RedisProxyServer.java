@@ -83,18 +83,18 @@ public class RedisProxyServer {
 	   */
 	  private void init(){
 		  if(redisServerMasterCluster !=null&& redisServerMasterCluster.getRedisServerClusterBeans()!=null&& redisServerMasterCluster.getRedisServerClusterBeans().size()>0){
-			  for(RedisServerClusterBean ffanRedisServerClusterBean: redisServerMasterCluster.getRedisServerClusterBeans()){
-				  RedisServerBean redisServerBean =ffanRedisServerClusterBean.getRedisServerMasterBean();
+			  for(RedisServerClusterBean redisServerClusterBean: redisServerMasterCluster.getRedisServerClusterBeans()){
+				  RedisServerBean redisServerBean =redisServerClusterBean.getRedisServerMasterBean();
 				  if(redisServerBean !=null){//主
-					  RedisProxyClient ffanRedisClient=new RedisProxyClient(redisServerBean.getRedisPoolConfig());
+					  RedisProxyClient ffanRedisClient=new RedisProxyClient(redisServerBean.getHost(),redisServerBean.getPort(),redisServerBean.getRedisPoolConfig());
 					  redisServerMasterCluster.getRedisClientBeanMap().put(redisServerBean.getKey(), ffanRedisClient);
 				  }
-				  List<RedisServerBean> ffanRedisServerClusterBeans=ffanRedisServerClusterBean.getRedisServerSlaveBeans();
-				  if(ffanRedisServerClusterBeans!=null&&ffanRedisServerClusterBeans.size()>0){
-					  for(RedisServerBean ffanRedisServerSlave:ffanRedisServerClusterBeans){
+				  List<RedisServerBean> redisServerClusterBeans=redisServerClusterBean.getRedisServerSlaveBeans();
+				  if(redisServerClusterBeans!=null&&redisServerClusterBeans.size()>0){
+					  for(RedisServerBean redisServerSlave:redisServerClusterBeans){
 						  
-						  RedisProxyClient ffanRedisClient=new RedisProxyClient(redisServerBean.getRedisPoolConfig());
-						  redisServerMasterCluster.getRedisClientBeanMap().put(ffanRedisServerSlave.getKey(), ffanRedisClient);
+						  RedisProxyClient ffanRedisClient=new RedisProxyClient(redisServerSlave.getHost(),redisServerSlave.getPort(),redisServerSlave.getRedisPoolConfig());
+						  redisServerMasterCluster.getRedisClientBeanMap().put(redisServerSlave.getKey(), ffanRedisClient);
 					  }
 				  }
 				  

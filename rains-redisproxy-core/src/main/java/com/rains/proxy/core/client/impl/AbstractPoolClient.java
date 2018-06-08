@@ -20,12 +20,12 @@ package com.rains.proxy.core.client.impl;
 
 import com.rains.proxy.core.client.Client;
 import com.rains.proxy.core.command.impl.RedisCommand;
-import com.rains.proxy.core.config.RedisProxyPool;
+import com.rains.proxy.core.config.RedisProxyPoolConfig;
 import com.rains.proxy.core.connection.IConnection;
 import com.rains.proxy.core.exception.RedisException;
 import com.rains.proxy.core.log.impl.LoggerUtils;
 import com.rains.proxy.core.pool.IPoolEntry;
-import com.rains.proxy.core.pool.PooledObjectFactory;
+import com.rains.proxy.core.pool.PooledFactory;
 import com.rains.proxy.core.pool.IRedisProxyPool;
 import com.rains.proxy.core.pool.exception.RedisProxyPoolException;
 import com.rains.proxy.core.pool.util.PoolUtils;
@@ -39,13 +39,13 @@ import io.netty.channel.ChannelHandlerContext;
 public abstract class AbstractPoolClient implements Client {
 	
 	protected IRedisProxyPool<IConnection> pool;
-    protected RedisProxyPool redisProxyPoolConfig;
-    protected PooledObjectFactory<IConnection> factory;
+    protected RedisProxyPoolConfig redisProxyPoolConfig;
+    protected PooledFactory<IConnection> factory;
 
 	/**
 	 * 
 	 */
-	public AbstractPoolClient(RedisProxyPool redisProxyPoolConfig) {
+	public AbstractPoolClient(RedisProxyPoolConfig redisProxyPoolConfig) {
 		super();
 		this.redisProxyPoolConfig =redisProxyPoolConfig;
 	}
@@ -63,7 +63,7 @@ public abstract class AbstractPoolClient implements Client {
 	 * 创建一个工厂类
 	 * @return
 	 */
-    protected abstract PooledObjectFactory<IConnection> createChannelFactory();
+    protected abstract PooledFactory<IConnection> createChannelFactory();
     
     public abstract void write(RedisCommand request, ChannelHandlerContext frontCtx);
     

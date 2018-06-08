@@ -27,7 +27,7 @@ import com.rains.proxy.core.pool.exception.RedisProxyPoolException;
  * 创建日期 2018/6/4
  * 对象创建接口 T
  */
-public interface PooledObjectFactory<T extends Pool> {
+public interface PooledFactory<T extends Pool> {
 	
 	/**
 	 * 创建实例

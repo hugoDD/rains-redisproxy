@@ -24,7 +24,7 @@ public class RedisProxySlave implements Serializable {
 
 	private List<String> name;
 	
-	private RedisProxyPool redisProxyPool;
+	private RedisProxyPoolConfig redisProxyPool;
 
 	public String getHost() {
 		return host;
@@ -50,11 +50,11 @@ public class RedisProxySlave implements Serializable {
 		this.weight = weight;
 	}
 
-	public RedisProxyPool getRedisProxyPool() {
+	public RedisProxyPoolConfig getRedisProxyPool() {
 		return redisProxyPool;
 	}
 
-	public void setRedisProxyPool(RedisProxyPool redisProxyPool) {
+	public void setRedisProxyPool(RedisProxyPoolConfig redisProxyPool) {
 		this.redisProxyPool = redisProxyPool;
 	}
 

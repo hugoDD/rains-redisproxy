@@ -18,7 +18,7 @@ package com.rains.proxy.core.bean.support;
 
 
 import com.rains.proxy.core.algorithm.impl.support.RedisWeight;
-import com.rains.proxy.core.config.RedisProxyPool;
+import com.rains.proxy.core.config.RedisProxyPoolConfig;
 import com.rains.proxy.core.constants.RedisConstants;
 
 /**
@@ -32,7 +32,7 @@ public class RedisServerBean implements RedisWeight {
 
     private int port;//端口号
 
-    private RedisProxyPool redisPoolConfig;
+    private RedisProxyPoolConfig redisPoolConfig;
 
     private int weight = 1;//默认权重比例为1
 
@@ -101,14 +101,14 @@ public class RedisServerBean implements RedisWeight {
     /**
      * @return the redisPoolConfig
      */
-    public RedisProxyPool getRedisPoolConfig() {
+    public RedisProxyPoolConfig getRedisPoolConfig() {
         return redisPoolConfig;
     }
 
     /**
      * @param redisPoolConfig the redisPoolConfig to set
      */
-    public void setRedisPoolConfig(RedisProxyPool redisPoolConfig) {
+    public void setRedisPoolConfig(RedisProxyPoolConfig redisPoolConfig) {
         this.redisPoolConfig = redisPoolConfig;
     }
 

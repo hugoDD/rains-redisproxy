@@ -10,7 +10,7 @@ import java.io.Serializable;
  * 连接池配置
  */
 
-public class RedisProxyPool implements Serializable {
+public class RedisProxyPoolConfig implements Serializable {
 
 	/**
 	 * 

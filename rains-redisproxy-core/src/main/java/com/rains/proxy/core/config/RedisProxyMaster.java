@@ -25,7 +25,7 @@ public class RedisProxyMaster implements Serializable{
 	
 	private int port;//端口号
 	
-	private RedisProxyPool redisProxyPool;//连接池配置
+	private RedisProxyPoolConfig redisProxyPool;//连接池配置
 	
 	private List<RedisProxySlave> redisSlaves;//多个从
 
@@ -58,11 +58,11 @@ public class RedisProxyMaster implements Serializable{
 		this.port = port;
 	}
 
-	public RedisProxyPool getRedisProxyPool() {
+	public RedisProxyPoolConfig getRedisProxyPool() {
 		return redisProxyPool;
 	}
 
-	public void setRedisProxyPool(RedisProxyPool redisProxyPool) {
+	public void setRedisProxyPool(RedisProxyPoolConfig redisProxyPool) {
 		this.redisProxyPool = redisProxyPool;
 	}
 

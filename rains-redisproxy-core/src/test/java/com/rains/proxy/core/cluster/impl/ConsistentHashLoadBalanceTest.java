@@ -12,7 +12,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -68,7 +67,7 @@ public class ConsistentHashLoadBalanceTest {
 
         List<RedisServerClusterBean> list = new ArrayList<>();
 
-        RedisProxyPool poolConfig =redisProxyConfiguration.getRedisPool();
+        RedisProxyPoolConfig poolConfig =redisProxyConfiguration.getRedisPool();
        // BeanUtils.copyProperties(redisProxyConfiguration.getRedisPool(),poolConfig);
 
        List<RedisProxyMaster> masters =redisProxyConfiguration.getGroupNode().get(0).getRedisMasters();

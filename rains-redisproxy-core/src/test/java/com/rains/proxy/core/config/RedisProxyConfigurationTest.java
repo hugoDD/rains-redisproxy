@@ -24,7 +24,7 @@ public class RedisProxyConfigurationTest {
 
     @Autowired
     private RedisProxyConfiguration redisProxyConfiguration;
-    RedisProxyPool poolConfig;
+    RedisProxyPoolConfig poolConfig;
 
     @Before
     public void setUp() throws Exception {

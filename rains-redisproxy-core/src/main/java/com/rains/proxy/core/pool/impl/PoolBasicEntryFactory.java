@@ -19,7 +19,7 @@ package com.rains.proxy.core.pool.impl;
 
 import com.rains.proxy.core.pool.IPoolEntry;
 import com.rains.proxy.core.pool.PoolEntryFactory;
-import com.rains.proxy.core.pool.PooledObjectFactory;
+import com.rains.proxy.core.pool.PooledFactory;
 import com.rains.proxy.core.pool.commons.Pool;
 import com.rains.proxy.core.pool.exception.RedisProxyPoolException;
 
@@ -33,13 +33,13 @@ import com.rains.proxy.core.pool.exception.RedisProxyPoolException;
  */
 public class PoolBasicEntryFactory<T extends Pool> implements PoolEntryFactory<T> {
 	
-	private final PooledObjectFactory<T> rpcPooledObjectFactory;
+	private final PooledFactory<T> rpcPooledFactory;
 	
 	
 	public PoolBasicEntryFactory(
-			PooledObjectFactory<T> rpcPoolBasicEntryFactory) {
+			PooledFactory<T> rpcPoolBasicEntryFactory) {
 		super();
-		this.rpcPooledObjectFactory = rpcPoolBasicEntryFactory;
+		this.rpcPooledFactory = rpcPoolBasicEntryFactory;
 	}
 
 
@@ -48,7 +48,7 @@ public class PoolBasicEntryFactory<T extends Pool> implements PoolEntryFactory<T
 	public IPoolEntry createPoolEntry() throws RedisProxyPoolException {
 		T object = null;
 		try {
-			object = rpcPooledObjectFactory.createInstance();
+			object = rpcPooledFactory.createInstance();
 			return new PoolEntry<T>(object);
 		} catch (RedisProxyPoolException e) {
 			throw e;
@@ -58,13 +58,13 @@ public class PoolBasicEntryFactory<T extends Pool> implements PoolEntryFactory<T
 
 	@Override
 	public Boolean validateEntry(T t) throws RedisProxyPoolException {
-		return rpcPooledObjectFactory.validateEntry(t);
+		return rpcPooledFactory.validateEntry(t);
 	}
 
 
 	@Override
 	public void destroyEntry(T t) throws RedisProxyPoolException {
-		rpcPooledObjectFactory.destroyEntry(t);
+		rpcPooledFactory.destroyEntry(t);
 	}
 
 }

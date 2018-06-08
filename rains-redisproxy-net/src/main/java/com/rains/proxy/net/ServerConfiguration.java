@@ -25,10 +25,9 @@ import com.rains.proxy.core.cluster.impl.ConsistentHashLoadBalance;
 import com.rains.proxy.core.cluster.impl.RoundRobinLoadBalance;
 import com.rains.proxy.core.config.RedisProxyConfiguration;
 import com.rains.proxy.core.config.RedisProxyMaster;
-import com.rains.proxy.core.config.RedisProxyPool;
+import com.rains.proxy.core.config.RedisProxyPoolConfig;
 import com.rains.proxy.core.config.RedisProxySlave;
 import com.rains.proxy.net.model.Server;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.*;
 import org.springframework.boot.bind.RelaxedPropertyResolver;
@@ -90,7 +89,7 @@ public class ServerConfiguration {
 //        RedisPoolConfig poolConfig = new RedisPoolConfig();
 //        BeanUtils.copyProperties(redisProxyConfiguration.getRedisPool(),poolConfig);
 
-        RedisProxyPool poolConfig =redisProxyConfiguration.getRedisPool();
+        RedisProxyPoolConfig poolConfig =redisProxyConfiguration.getRedisPool();
 
         List<RedisProxyMaster> masters =redisProxyConfiguration.getGroupNode().get(0).getRedisMasters();
 

@@ -18,7 +18,7 @@ package com.rains.proxy.net.client;
 
 
 import com.rains.proxy.core.connection.IConnection;
-import com.rains.proxy.core.pool.PooledObjectFactory;
+import com.rains.proxy.core.pool.PooledFactory;
 import com.rains.proxy.core.pool.exception.RedisProxyPoolException;
 
 /**
@@ -26,7 +26,7 @@ import com.rains.proxy.core.pool.exception.RedisProxyPoolException;
  * @version V1.0
  * 创建日期 2018/6/4
  */
-public class RedisConnectionFactory implements PooledObjectFactory<IConnection> {
+public class RedisConnectionFactory implements PooledFactory<IConnection> {
 	
 
 

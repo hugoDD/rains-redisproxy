@@ -17,7 +17,7 @@
 package com.rains.proxy.core.pool.impl;
 
 
-import com.rains.proxy.core.config.RedisProxyPool;
+import com.rains.proxy.core.config.RedisProxyPoolConfig;
 import com.rains.proxy.core.pool.IPoolEntry;
 import com.rains.proxy.core.pool.IdleEntriesQueue;
 import com.rains.proxy.core.pool.IRedisProxyPool;
@@ -39,7 +39,7 @@ import java.util.concurrent.TimeoutException;
  */
 public class RedisProxyBasicPool<T extends Pool> implements IRedisProxyPool<T> {
 	
-	private final RedisProxyPool config;
+	private final RedisProxyPoolConfig config;
 	private final PoolEntryFactory<T> entryFactory;
 	private final IdleEntriesQueue<T> idleEntriesQueue;//空闲存放队列
 	private int totalCount;//当前总数
@@ -51,8 +51,8 @@ public class RedisProxyBasicPool<T extends Pool> implements IRedisProxyPool<T> {
 	private long maxWaitMillisOnBorrow;
 
 	
-	public RedisProxyBasicPool(RedisProxyPool config, IdleEntriesQueue<T> idleEntriesQueue,
-							   PoolEntryFactory<T> entryFactory) throws Exception {
+	public RedisProxyBasicPool(RedisProxyPoolConfig config, IdleEntriesQueue<T> idleEntriesQueue,
+                               PoolEntryFactory<T> entryFactory) throws Exception {
 		this.config = config;
 		this.idleEntriesQueue = idleEntriesQueue;
 		this.entryFactory = entryFactory;
