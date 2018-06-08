@@ -1,9 +1,8 @@
 rains-redisproxy
 ================
-
+![license](https://img.shields.io/badge/license-Apache--2.0-green.svg)
 [![Build Status](https://travis-ci.org/hugoDD/rains-redisproxy.svg?branch=master)](https://travis-ci.org/hugoDD/rains-redisproxy)
-
-
+[![Coverage Status](https://coveralls.io/repos/github/hugoDD/rains-redisproxy/badge.svg?branch=master)](https://coveralls.io/github/hugoDD/rains-redisproxy?branch=master)
 
 rains-redisproxy 是一个开源Redis中间件服务，支持redis协议通信，使用普通的redis客户端即可，无须修改业务应用程序任何代码与配置，与业务解耦；
 以netty 作为通信传输工具，让它具有高性能，高并发，可分布式扩展部署等特点；使用用eureka做redisProxy服务注册与发现中心使得分布式扩展部署更加
