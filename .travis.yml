@@ -8,7 +8,6 @@ jdk:
 before_script:
   - echo "MAVEN_OPTS='-Xms1024m -Xmx3072m -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=384m'" > ~/.mavenrc
 
-
 after_success:
   - mvn clean test jacoco:report coveralls:report
 
@@ -18,6 +17,7 @@ branches:
 
 env:
   global:
+   -   secure: "YuzGpKf7RmzS1GMKevZqQPskDJ0yStNL8yCOgC5X4eb9bZCcfugOgh6Ek9wDGJhrwVuLDnWEt1tFHFVKzRtXIrR/QhHS8LhAru0efL9YSSYCC5t7aHI/qXuD2rOP/+l42avkGV6k0cy5/laZfUuHWzVO8FJaUrWJyiRAwfv7lpCYfn9UrcmFZWs9XuJjdHJ8Rxr6RSgthYlusoDL5KBbSFJvoY5k26nPc47N5VOMeN0kHJIMtuieiXs87FJuXXOS/uSCS+/FxG/xYDmiXg1EJS3f3xR1B7PQvLOjdQ/rQ/U7qxOdky6ko4ORHlLbNyufleye+qhJTK8+Ma6nA/fV6FlOj+KkHFaTthSL1JRm/Kk1laNJpqXdwKm8ngutvjofPOIjJACY6kH30FEtR4/d6MGa16vPRIFhGB6MnTT9rqZofxlYg2IQ1l83dcAcBhHbRSEXx8INLoOz8cjWVDedMetNdqIQbfLztjXgopQxMKeZYEVCIhfM3Qi4FrQH9m/BDLf6PM/GPqRzvkYAfwnxU1K6sTjSx0Vlt7FKsA9+J8Ejo/+I5TBgOJ8DjM5xulNhLD6c7qFK68DmVHmNvVrOpdoaUaz3pVKQRf9/KOTPk2TVcoIBfXNezuUcMiwvC73PY9H/9ZmFHqnFsM+lqTpNTKs6MwJC/9Jr/GGG92hgMOE="
    - "MAVEN_OPTS=-Xms1024m -Xmx3072m -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=384m"
 
 addons:
