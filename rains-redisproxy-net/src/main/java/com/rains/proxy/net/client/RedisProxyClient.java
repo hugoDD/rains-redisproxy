@@ -19,10 +19,10 @@ package com.rains.proxy.net.client;
 
 import com.rains.proxy.core.client.impl.AbstractPoolClient;
 import com.rains.proxy.core.command.impl.RedisCommand;
+import com.rains.proxy.core.config.RedisProxyPool;
 import com.rains.proxy.core.connection.IConnection;
 import com.rains.proxy.core.pool.IPoolEntry;
 import com.rains.proxy.core.pool.PooledObjectFactory;
-import com.rains.proxy.core.pool.commons.RedisProxyPoolConfig;
 import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,12 +39,12 @@ public class RedisProxyClient extends AbstractPoolClient {
 
 	private Logger logger = LoggerFactory.getLogger(RedisProxyClient.class);
 	
-	private RedisProxyPoolConfig redisProxyPoolConfig;
+	private RedisProxyPool redisProxyPoolConfig;
 
 	/**
 	 * @param redisProxyPoolConfig
 	 */
-	public RedisProxyClient(RedisProxyPoolConfig redisProxyPoolConfig) {
+	public RedisProxyClient(RedisProxyPool redisProxyPoolConfig) {
 		 super(redisProxyPoolConfig);
 		 this.redisProxyPoolConfig = redisProxyPoolConfig;
 		 super.initPool();//初始化连接池

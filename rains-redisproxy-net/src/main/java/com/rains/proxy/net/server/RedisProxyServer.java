@@ -18,10 +18,8 @@ package com.rains.proxy.net.server;
 
 
 import com.rains.proxy.core.bean.RedisServerMasterCluster;
-import com.rains.proxy.core.bean.RedisPoolConfig;
 import com.rains.proxy.core.bean.support.RedisServerBean;
 import com.rains.proxy.core.bean.support.RedisServerClusterBean;
-import com.rains.proxy.core.pool.commons.RedisProxyPoolConfig;
 import com.rains.proxy.core.protocol.RedisReplyEncoder;
 import com.rains.proxy.core.protocol.RedisRequestDecoder;
 import com.rains.proxy.net.client.RedisProxyClient;
@@ -88,16 +86,14 @@ public class RedisProxyServer {
 			  for(RedisServerClusterBean ffanRedisServerClusterBean: redisServerMasterCluster.getRedisServerClusterBeans()){
 				  RedisServerBean redisServerBean =ffanRedisServerClusterBean.getRedisServerMasterBean();
 				  if(redisServerBean !=null){//主
-					  RedisProxyPoolConfig redisProxyPoolConfig =convertLBRedisProxyPoolConfig(redisServerBean);
-					  RedisProxyClient ffanRedisClient=new RedisProxyClient(redisProxyPoolConfig);
+					  RedisProxyClient ffanRedisClient=new RedisProxyClient(redisServerBean.getRedisPoolConfig());
 					  redisServerMasterCluster.getRedisClientBeanMap().put(redisServerBean.getKey(), ffanRedisClient);
 				  }
 				  List<RedisServerBean> ffanRedisServerClusterBeans=ffanRedisServerClusterBean.getRedisServerSlaveBeans();
 				  if(ffanRedisServerClusterBeans!=null&&ffanRedisServerClusterBeans.size()>0){
 					  for(RedisServerBean ffanRedisServerSlave:ffanRedisServerClusterBeans){
 						  
-						  RedisProxyPoolConfig redisProxyPoolConfig =convertLBRedisProxyPoolConfig(redisServerBean);
-						  RedisProxyClient ffanRedisClient=new RedisProxyClient(redisProxyPoolConfig);
+						  RedisProxyClient ffanRedisClient=new RedisProxyClient(redisServerBean.getRedisPoolConfig());
 						  redisServerMasterCluster.getRedisClientBeanMap().put(ffanRedisServerSlave.getKey(), ffanRedisClient);
 					  }
 				  }
@@ -107,30 +103,7 @@ public class RedisProxyServer {
 	  }
 	  
 	  
-	  /**
-	   * 转换
-	   * @param redisServerBean
-	   * @return
-	   */
-	  private RedisProxyPoolConfig convertLBRedisProxyPoolConfig(RedisServerBean redisServerBean){
-		  RedisProxyPoolConfig redisProxyPoolConfig =new RedisProxyPoolConfig();
-		  RedisPoolConfig redisPoolConfig= redisServerBean.getRedisPoolConfig();
-		  redisProxyPoolConfig.setConnectionTimeout(redisPoolConfig.getConnectionTimeout());
-		  redisProxyPoolConfig.setHost(redisServerBean.getHost());
-		  redisProxyPoolConfig.setInitialEntries(redisPoolConfig.getInitialConnection());
-		  redisProxyPoolConfig.setMaxActiveEntries(redisPoolConfig.getMaxActiveConnection());
-		  redisProxyPoolConfig.setMaxWaitMillisOnBorrow(redisPoolConfig.getMaxWaitMillisOnBorrow());
-		  redisProxyPoolConfig.setMinActiveEntries(redisPoolConfig.getMinConnection());
-		  redisProxyPoolConfig.setMinEvictableIdleTimeMillis(redisPoolConfig.getMinEvictableIdleTimeMillis());
-		  redisProxyPoolConfig.setMinIdleEntries(redisPoolConfig.getMinIdleEntries());
-		  redisProxyPoolConfig.setPort(redisServerBean.getPort());
-		  redisProxyPoolConfig.setTestOnBorrow(redisPoolConfig.isTestOnBorrow());
-		  redisProxyPoolConfig.setTestOnReturn(redisPoolConfig.isTestOnReturn());
-		  redisProxyPoolConfig.setTestWhileIdle(redisPoolConfig.isTestWhileIdle());
-		  redisProxyPoolConfig.setTimeBetweenEvictionRunsMillis(redisPoolConfig.getTimeBetweenEvictionRunsMillis());
-		  return redisProxyPoolConfig;
-	  }
-	  
+
 	/**
 	 * 启动系统，开启接收连接，处理业务
 	 */
@@ -156,7 +129,7 @@ public class RedisProxyServer {
 						ch.pipeline().addLast("RedisReplyEncoder",
 								new RedisReplyEncoder());
 						ch.pipeline().addLast(
-								"FfanRedisServerHandler",
+								"RedisServerHandler",
 								new RedisServerHandler(
 										redisServerMasterCluster.getRedisClientBeanMap(), redisServerMasterCluster));
 					}

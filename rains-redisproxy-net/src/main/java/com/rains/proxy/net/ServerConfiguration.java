@@ -18,7 +18,6 @@ package com.rains.proxy.net;
 
 import com.netflix.appinfo.EurekaInstanceConfig;
 import com.rains.proxy.core.bean.RedisServerMasterCluster;
-import com.rains.proxy.core.bean.RedisPoolConfig;
 import com.rains.proxy.core.bean.support.RedisServerBean;
 import com.rains.proxy.core.bean.support.RedisServerClusterBean;
 import com.rains.proxy.core.cluster.LoadBalance;
@@ -26,6 +25,7 @@ import com.rains.proxy.core.cluster.impl.ConsistentHashLoadBalance;
 import com.rains.proxy.core.cluster.impl.RoundRobinLoadBalance;
 import com.rains.proxy.core.config.RedisProxyConfiguration;
 import com.rains.proxy.core.config.RedisProxyMaster;
+import com.rains.proxy.core.config.RedisProxyPool;
 import com.rains.proxy.core.config.RedisProxySlave;
 import com.rains.proxy.net.model.Server;
 import org.springframework.beans.BeanUtils;
@@ -87,8 +87,10 @@ public class ServerConfiguration {
     public RedisServerMasterCluster redisServerMasterCluster(RedisProxyConfiguration redisProxyConfiguration, @Qualifier("loadMasterBalance") LoadBalance loadMasterBalance, @Qualifier("loadSlaveBalance") LoadBalance loadSlaveBalance){
         List<RedisServerClusterBean> list = new ArrayList<>();
 
-        RedisPoolConfig poolConfig = new RedisPoolConfig();
-        BeanUtils.copyProperties(redisProxyConfiguration.getRedisPool(),poolConfig);
+//        RedisPoolConfig poolConfig = new RedisPoolConfig();
+//        BeanUtils.copyProperties(redisProxyConfiguration.getRedisPool(),poolConfig);
+
+        RedisProxyPool poolConfig =redisProxyConfiguration.getRedisPool();
 
         List<RedisProxyMaster> masters =redisProxyConfiguration.getGroupNode().get(0).getRedisMasters();
 

@@ -1,12 +1,12 @@
 package com.rains.proxy.core.cluster.impl;
 
 import com.rains.proxy.core.bean.RedisServerMasterCluster;
-import com.rains.proxy.core.bean.RedisPoolConfig;
 import com.rains.proxy.core.bean.support.RedisServerBean;
 import com.rains.proxy.core.bean.support.RedisServerClusterBean;
 import com.rains.proxy.core.command.impl.RedisCommand;
 import com.rains.proxy.core.config.RedisProxyConfiguration;
 import com.rains.proxy.core.config.RedisProxyMaster;
+import com.rains.proxy.core.config.RedisProxyPool;
 import com.rains.proxy.core.config.RedisProxySlave;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -63,8 +63,8 @@ public class BaseLoadBalanceTest {
 
         List<RedisServerClusterBean> list = new ArrayList<>();
 
-        RedisPoolConfig poolConfig = new RedisPoolConfig();
-        BeanUtils.copyProperties(redisProxyConfiguration.getRedisPool(),poolConfig);
+        RedisProxyPool poolConfig = redisProxyConfiguration.getRedisPool();
+
 
         List<RedisProxyMaster> masters =redisProxyConfiguration.getGroupNode().get(0).getRedisMasters();
 

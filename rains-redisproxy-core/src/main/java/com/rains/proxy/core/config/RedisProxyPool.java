@@ -43,6 +43,10 @@ public class RedisProxyPool implements Serializable {
 	
 	private boolean testWhileIdle=false;//回收空闲验证
 
+
+    private String host="127.0.0.1";
+    private int port=6379;
+
 	/**
 	 * @return the timeout
 	 */
@@ -224,7 +228,20 @@ public class RedisProxyPool implements Serializable {
 	public void setTestWhileIdle(boolean testWhileIdle) {
 		this.testWhileIdle = testWhileIdle;
 	}
-	
-	
 
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
 }

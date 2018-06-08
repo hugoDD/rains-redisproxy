@@ -19,7 +19,6 @@ package com.rains.proxy.net.client;
 
 import com.rains.proxy.core.connection.IConnection;
 import com.rains.proxy.core.pool.PooledObjectFactory;
-import com.rains.proxy.core.pool.commons.RedisProxyPoolConfig;
 import com.rains.proxy.core.pool.exception.RedisProxyPoolException;
 
 /**
@@ -29,7 +28,7 @@ import com.rains.proxy.core.pool.exception.RedisProxyPoolException;
  */
 public class RedisConnectionFactory implements PooledObjectFactory<IConnection> {
 	
-	private RedisProxyPoolConfig redisProxyPoolConfig;
+
 
 	private String host="127.0.0.1";
 

@@ -17,11 +17,11 @@
 package com.rains.proxy.core.pool.util;
 
 
+import com.rains.proxy.core.config.RedisProxyPool;
 import com.rains.proxy.core.connection.IConnection;
 import com.rains.proxy.core.pool.IdleEntriesQueue;
 import com.rains.proxy.core.pool.PoolEntryFactory;
 import com.rains.proxy.core.pool.PooledObjectFactory;
-import com.rains.proxy.core.pool.commons.RedisProxyPoolConfig;
 import com.rains.proxy.core.pool.impl.RedisProxyBasicPool;
 import com.rains.proxy.core.pool.impl.PoolBasicIdleEntriesQueue;
 import com.rains.proxy.core.pool.impl.PoolBasicEntryFactory;
@@ -40,8 +40,8 @@ public class PoolUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static RedisProxyBasicPool<IConnection> createPool(RedisProxyPoolConfig config, PooledObjectFactory<IConnection> factory) throws Exception {
-		return createPool( config, new PoolBasicIdleEntriesQueue(config.getMaxActiveEntries()),new PoolBasicEntryFactory(factory));
+	public static RedisProxyBasicPool<IConnection> createPool(RedisProxyPool config, PooledObjectFactory<IConnection> factory) throws Exception {
+		return createPool( config, new PoolBasicIdleEntriesQueue(config.getMaxActiveConnection()),new PoolBasicEntryFactory(factory));
 	}
 
 
@@ -49,7 +49,7 @@ public class PoolUtils {
 
 
 	
-	public static RedisProxyBasicPool<IConnection> createPool(RedisProxyPoolConfig config, IdleEntriesQueue<IConnection> queue, PoolEntryFactory<IConnection> factory) throws Exception {
+	public static RedisProxyBasicPool<IConnection> createPool(RedisProxyPool config, IdleEntriesQueue<IConnection> queue, PoolEntryFactory<IConnection> factory) throws Exception {
 		return new RedisProxyBasicPool<>(config, queue, factory);
 	}
 }

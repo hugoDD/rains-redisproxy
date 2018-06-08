@@ -28,7 +28,7 @@ import java.util.concurrent.TimeoutException;
  * @version V1.0
  * 创建日期 2018/6/4
  */
-public interface RedisProxyPool<T  extends Pool> {
+public interface IRedisProxyPool<T  extends Pool> {
 
 
 	IPoolEntry<T> borrowEntry() throws InterruptedException, TimeoutException,RedisProxyPoolException;

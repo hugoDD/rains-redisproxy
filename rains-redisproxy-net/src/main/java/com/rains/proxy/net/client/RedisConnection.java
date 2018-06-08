@@ -22,7 +22,6 @@ import com.rains.proxy.core.connection.IConnection;
 import com.rains.proxy.core.constants.RedisProxyErrorMsgConstant;
 import com.rains.proxy.core.enums.ChannelState;
 import com.rains.proxy.core.exception.RedisProxyFrameworkException;
-import com.rains.proxy.core.pool.commons.RedisProxyPoolConfig;
 import com.rains.proxy.core.protocol.RedisReplyDecoder;
 import com.rains.proxy.core.protocol.RedisRequestEncoder;
 import com.rains.proxy.core.reply.IRedisReply;

@@ -17,11 +17,11 @@
 package com.rains.proxy.core.pool.impl;
 
 
+import com.rains.proxy.core.config.RedisProxyPool;
 import com.rains.proxy.core.pool.IPoolEntry;
 import com.rains.proxy.core.pool.IdleEntriesQueue;
-import com.rains.proxy.core.pool.RedisProxyPool;
+import com.rains.proxy.core.pool.IRedisProxyPool;
 import com.rains.proxy.core.pool.PoolEntryFactory;
-import com.rains.proxy.core.pool.commons.RedisProxyPoolConfig;
 import com.rains.proxy.core.pool.commons.Pool;
 import com.rains.proxy.core.pool.exception.RedisProxyPoolException;
 
@@ -37,21 +37,26 @@ import java.util.concurrent.TimeoutException;
  * 创建日期 2018/6/4
  * 连接池实现类
  */
-public class RedisProxyBasicPool<T extends Pool> implements RedisProxyPool<T> {
+public class RedisProxyBasicPool<T extends Pool> implements IRedisProxyPool<T> {
 	
-	private final RedisProxyPoolConfig config;
+	private final RedisProxyPool config;
 	private final PoolEntryFactory<T> entryFactory;
 	private final IdleEntriesQueue<T> idleEntriesQueue;//空闲存放队列
 	private int totalCount;//当前总数
 	private volatile boolean shuttingDown;//关闭
 	private Scavenger scavenger;//回收线程
+
+	/**init entries count*/
+	private int initial;
+	private long maxWaitMillisOnBorrow;
+
 	
-	public RedisProxyBasicPool(RedisProxyPoolConfig config, IdleEntriesQueue<T> idleEntriesQueue,
+	public RedisProxyBasicPool(RedisProxyPool config, IdleEntriesQueue<T> idleEntriesQueue,
 							   PoolEntryFactory<T> entryFactory) throws Exception {
 		this.config = config;
 		this.idleEntriesQueue = idleEntriesQueue;
 		this.entryFactory = entryFactory;
-		for (int i = 0; i < config.getInitialEntries(); i++) {
+		for (int i = 0; i < config.getInitialConnection(); i++) {
 			try {
 				idleEntriesQueue.offer(createIdleEntry());
 			} catch (Exception e) {
@@ -143,8 +148,8 @@ public class RedisProxyBasicPool<T extends Pool> implements RedisProxyPool<T> {
 	 * @return
 	 */
 	private synchronized int increaseObjects(int delta) {
-        if (delta + totalCount > config.getMaxActiveEntries()) {
-			delta = config.getMaxActiveEntries() - totalCount;
+        if (delta + totalCount > config.getMaxActiveConnection()) {
+			delta = config.getMaxActiveConnection() - totalCount;
         }
         try {
             for (int i = 0; i < delta; i++) {
@@ -188,7 +193,7 @@ public class RedisProxyBasicPool<T extends Pool> implements RedisProxyPool<T> {
 	}
 	
 	public synchronized void scavenge() throws RedisProxyPoolException {
-        int delta = this.totalCount - config.getMinActiveEntries();
+        int delta = this.totalCount - config.getMaxActiveConnection();
         if (delta <= 0) {
         	return;
         }

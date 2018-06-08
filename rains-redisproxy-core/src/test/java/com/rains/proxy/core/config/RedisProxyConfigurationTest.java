@@ -24,10 +24,12 @@ public class RedisProxyConfigurationTest {
 
     @Autowired
     private RedisProxyConfiguration redisProxyConfiguration;
-
+    RedisProxyPool poolConfig;
 
     @Before
     public void setUp() throws Exception {
+        poolConfig= redisProxyConfiguration.getRedisPool();
+        assertNotNull(poolConfig);
     }
 
     @After
@@ -36,8 +38,7 @@ public class RedisProxyConfigurationTest {
 
     @Test
     public void getRedisPool() {
-       RedisProxyPool poolConfig= redisProxyConfiguration.getRedisPool();
-       assertNotNull(poolConfig);
+
        assertEquals(5000,poolConfig.getConnectionTimeout());
        assertEquals(100,poolConfig.getMaxActiveConnection());
        assertEquals(80,poolConfig.getMaxIdleConnection());

@@ -1,7 +1,6 @@
 package com.rains.proxy.core.cluster.impl;
 
 import com.rains.proxy.core.bean.RedisServerMasterCluster;
-import com.rains.proxy.core.bean.RedisPoolConfig;
 import com.rains.proxy.core.bean.support.RedisServerBean;
 import com.rains.proxy.core.bean.support.RedisServerClusterBean;
 import com.rains.proxy.core.cluster.impl.support.RedisQuestBean;
@@ -69,8 +68,8 @@ public class ConsistentHashLoadBalanceTest {
 
         List<RedisServerClusterBean> list = new ArrayList<>();
 
-        RedisPoolConfig poolConfig = new RedisPoolConfig();
-        BeanUtils.copyProperties(redisProxyConfiguration.getRedisPool(),poolConfig);
+        RedisProxyPool poolConfig =redisProxyConfiguration.getRedisPool();
+       // BeanUtils.copyProperties(redisProxyConfiguration.getRedisPool(),poolConfig);
 
        List<RedisProxyMaster> masters =redisProxyConfiguration.getGroupNode().get(0).getRedisMasters();
 
