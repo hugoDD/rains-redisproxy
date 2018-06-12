@@ -57,7 +57,7 @@ public class RedisServerMasterCluster implements Serializable {
      ***/
     private List<RedisServerBean> masters = new ArrayList<RedisServerBean>();
 
-    private String redisProxyHost="127.0.0.1";//主机名
+    private String redisProxyHost;//主机名
 
     private int redisProxyPort=6379;//端口号
 

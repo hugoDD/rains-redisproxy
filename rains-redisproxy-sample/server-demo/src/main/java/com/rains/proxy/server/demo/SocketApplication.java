@@ -37,8 +37,8 @@ import java.util.List;
 /**
  * create by lorne on 2017/10/13
  */
-@EnableEurekaClient
-@EnableFeignClients
+//@EnableEurekaClient
+//@EnableFeignClients
 @SpringBootApplication
 @EnableAutoConfiguration
 public class SocketApplication   implements CommandLineRunner {

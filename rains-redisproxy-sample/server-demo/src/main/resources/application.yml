@@ -1,10 +1,10 @@
-eureka:
-  client:
-    service-url:
-      defaultZone:  http://localhost:8761/eureka/
-  instance:
-    prefer-ip-address: true # 注册时使用ip而不是主机名
-    instance-id:  ${spring.cloud.client.ipAddress}:${server.port}
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone:  http://localhost:8761/eureka/
+#  instance:
+#    prefer-ip-address: true # 注册时使用ip而不是主机名
+#    instance-id:  ${spring.cloud.client.ipAddress}:${server.port}
 
 logging:
   level:

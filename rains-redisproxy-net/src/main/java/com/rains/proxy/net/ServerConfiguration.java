@@ -105,7 +105,7 @@ public class ServerConfiguration {
             redisServerClusterBean.setLoadClusterBalance(loadSlaveBalance);
 
 
-            if(redisServerClusterBean.getRedisServerSlaveBeans()!=null){
+            if(master.getRedisSlaves()!=null){
                 //slave
                 List<RedisServerBean> slaves = new ArrayList<>();
                 for(RedisProxySlave slave :master.getRedisSlaves()){

@@ -9,6 +9,7 @@ import com.rains.proxy.net.RedisProxyConfigurationTest;
 import com.rains.proxy.net.server.RedisProxyServer;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.embedded.EmbeddedChannel;
 import org.junit.Before;
 import org.junit.Test;
@@ -53,15 +54,19 @@ public class RedisProxyServerHandlerTest {
 
 
         EmbeddedChannel channel = new EmbeddedChannel(new RedisServerHandler(redisServerMasterCluster.getRedisClientBeanMap(),redisServerMasterCluster));
-        assertTrue(channel.writeInbound(redisCommand));
+        channel.writeInbound(redisCommand);
+        channel.flushInbound();
         assertTrue(channel.finish());
+      //  ChannelFuture future= channel.writeAndFlush(redisCommand);
+      // assertTrue(future.isDone());
         IRedisReply redisReply =channel.readOutbound();
         assertNotNull(redisReply);
         assertTrue(redisReply instanceof StatusRedisReply);
 
          redisCommand = getRedisCommand("SELECT 1");
          channel = new EmbeddedChannel(new RedisServerHandler(redisServerMasterCluster.getRedisClientBeanMap(),redisServerMasterCluster));
-        assertTrue(channel.writeInbound(redisCommand));
+        channel.writeInbound(redisCommand);
+        channel.flushInbound();
         assertTrue(channel.finish());
          redisReply =channel.readOutbound();
         assertNotNull(redisReply);

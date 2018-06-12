@@ -16,9 +16,14 @@
             <url>http://www.apache.org/licenses/LICENSE-2.0</url>
         </license>
     </licenses>
+
     <scm>
-        <url>https://github.com/hugoDD/rains-redisproxy.git</url>
+        <connection>scm:git:https://github.com/hugoDD/rains-redisproxy.git</connection>
+        <developerConnection>scm:git:https://github.com/hugoDD/rains-redisproxy.git</developerConnection>
+        <url>https://github.com/hugoDD/rains-redisproxy/tree/master</url>
     </scm>
+
+
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -564,6 +569,7 @@
                 <artifactId>coveralls-maven-plugin</artifactId>
                 <version>4.3.0</version>
             </plugin>
+
         </plugins>
     </build>
 
