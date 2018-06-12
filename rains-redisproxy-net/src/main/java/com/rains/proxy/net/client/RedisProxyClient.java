@@ -73,7 +73,7 @@ public class RedisProxyClient extends AbstractPoolClient {
 	 */
 	@Override
 	protected PooledFactory<IConnection> createChannelFactory() {
-		return new RedisConnectionFactory(redisProxyPoolConfig.getHost(),redisProxyPoolConfig.getPort(),redisProxyPoolConfig.getConnectionTimeout());
+		return new RedisConnectionFactory(redisHost,port,redisProxyPoolConfig.getConnectionTimeout());
 	}
     
 	@Override

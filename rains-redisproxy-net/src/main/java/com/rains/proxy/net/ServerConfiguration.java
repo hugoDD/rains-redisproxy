@@ -104,17 +104,22 @@ public class ServerConfiguration {
             redisServerClusterBean.setRedisServerMasterBean(redisServerBean);
             redisServerClusterBean.setLoadClusterBalance(loadSlaveBalance);
 
-            //slave
-            List<RedisServerBean> slaves = new ArrayList<>();
-            for(RedisProxySlave slave :master.getRedisSlaves()){
-                RedisServerBean redisSlaveServerBean = new RedisServerBean();
-                redisSlaveServerBean.setRedisPoolConfig(poolConfig);
-                redisSlaveServerBean.setHost(slave.getHost());
-                redisSlaveServerBean.setPort(slave.getPort());
-                slaves.add(redisSlaveServerBean);
+
+            if(redisServerClusterBean.getRedisServerSlaveBeans()!=null){
+                //slave
+                List<RedisServerBean> slaves = new ArrayList<>();
+                for(RedisProxySlave slave :master.getRedisSlaves()){
+                    RedisServerBean redisSlaveServerBean = new RedisServerBean();
+                    redisSlaveServerBean.setRedisPoolConfig(poolConfig);
+                    redisSlaveServerBean.setHost(slave.getHost());
+                    redisSlaveServerBean.setPort(slave.getPort());
+                    slaves.add(redisSlaveServerBean);
+                }
+                redisServerClusterBean.setRedisServerSlaveBeans(slaves);
             }
-            redisServerClusterBean.setRedisServerSlaveBeans(slaves);
+
             list.add(redisServerClusterBean);
+
         }
 
 

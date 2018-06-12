@@ -41,11 +41,11 @@ redisproxy:
     - redisMasters :
        -  host: 172.26.223.109
           port: 16379
-          redisSlaves:
-            - host: 172.26.223.109
-              port: 26379
-            - host: 172.26.223.109
-              port: 6379
+#          redisSlaves:
+#            - host: 172.26.223.109
+#              port: 26379
+#            - host: 172.26.223.109
+#              port: 6379
 #       -  host: 172.26.223.108
 #          port: 16379
 #          redisSlaves:
