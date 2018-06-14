@@ -79,8 +79,28 @@ rains-redisproxy 是一个开源Redis中间件服务，支持redis协议通信�
 ###  [demo](https://github.com/hugoDD/rains-redisproxy/wiki/demo)
 
 
+#性能测试
+ 直连redis使用jhm测试
+
+| Benchmark                           |  Mode  | Cnt |   Score |     Error  | Units |
+| :-                                  | :-     | :-  | :-       | :-        | :-    |  
+| RedisClientJhmTest.redisGetCmd      |  thrpt |  20 | 436.251 | ± 109.164 | ops/s |
+| RedisClientJhmTest.redisHgetCmd     |  thrpt |  20 | 446.744 | ±  74.614 | ops/s |
+| RedisClientJhmTest.redisHsetCmd     |  thrpt |  20 | 431.811 | ±  62.996 | ops/s |
+| RedisClientJhmTest.redisListPopCmd  |  thrpt |  20 | 472.401 | ±  74.417 | ops/s |
+| RedisClientJhmTest.redisListPushCmd | thrpt  | 20  | 501.044 | ±  25.642 | ops/s |
+| RedisClientJhmTest.redisSetCmd      | thrpt  | 20  | 440.543 | ±  67.428 | ops/s |  
 
 
+直连proxy使用jhm测试
+
+|Benchmark                            |Mode   | Cnt  |  Score  |  Error   |Units |
+|RedisClientJhmTest.proxyGetCmd       |thrpt   | 20  | 306.951 |± 38.230 | ops/s |
+|RedisClientJhmTest.proxyHgetCmd      |thrpt   | 20  | 316.415 |± 17.515 | ops/s |
+|RedisClientJhmTest.proxyHsetCmd      |thrpt   | 20  | 242.959 |± 82.894 | ops/s |
+|RedisClientJhmTest.proxyListPopCmd   |thrpt   | 20  | 260.596 |± 85.742 | ops/s |
+|RedisClientJhmTest.proxyListPushCmd  |thrpt   | 20  | 291.199 |± 46.258 | ops/s |
+|RedisClientJhmTest.proxySetCmd       |thrpt   | 20  | 332.892 |± 35.410 | ops/s |
 
 
 # FAQ
