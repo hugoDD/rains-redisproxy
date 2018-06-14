@@ -39,6 +39,8 @@ public class RedisRequestEncoder extends MessageToByteEncoder<RedisCommand> {
                           ByteBuf out) throws Exception {
     	msg.encode(out);
 
+
+
     	if(logger.isDebugEnabled()){
     		logger.debug("request编码后协议文本内容:{}",out.toString(CharsetUtil.UTF_8).replaceAll("\r\n","\\\\r\\\\n"));
 		}

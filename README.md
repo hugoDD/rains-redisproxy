@@ -95,6 +95,7 @@ rains-redisproxy 是一个开源Redis中间件服务，支持redis协议通信�
 直连proxy使用jhm测试
 
 |Benchmark                            |Mode   | Cnt  |  Score  |  Error   |Units |
+|:-                                   |:-      | -:  | -:      |  -       | :-    |
 |RedisClientJhmTest.proxyGetCmd       |thrpt   | 20  | 306.951 |± 38.230 | ops/s |
 |RedisClientJhmTest.proxyHgetCmd      |thrpt   | 20  | 316.415 |± 17.515 | ops/s |
 |RedisClientJhmTest.proxyHsetCmd      |thrpt   | 20  | 242.959 |± 82.894 | ops/s |

@@ -165,11 +165,9 @@ public class RedisServerHandler extends SimpleChannelInboundHandler<RedisCommand
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        cause.printStackTrace();
         if (cause instanceof IOException) {
             String message = cause.getMessage();
             if (message != null && "远程主机强迫关闭了一个现有的连接。".equals(message)) {
-                ctx.channel().writeAndFlush(new StatusRedisReply("OK".getBytes()));
                 logger.warn("Client closed!");
             } else {
                 logger.error("出错，客户端关闭连接", cause);

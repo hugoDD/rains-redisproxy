@@ -9,7 +9,7 @@
 logging:
   level:
     root: INFO
-    com.rains.proxy: DEBUG
+    com.rains.proxy: INFO
 
 
 security:
