@@ -1,10 +1,10 @@
-#eureka:
-#  client:
-#    service-url:
-#      defaultZone:  http://localhost:8761/eureka/
-#  instance:
-#    prefer-ip-address: true # 注册时使用ip而不是主机名
-#    instance-id:  ${spring.cloud.client.ipAddress}:${server.port}
+eureka:
+  client:
+    service-url:
+      defaultZone:  http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true # 注册时使用ip而不是主机名
+    instance-id:  ${spring.cloud.client.ipAddress}:${server.port}
 
 logging:
   level:
@@ -41,11 +41,11 @@ redisproxy:
     - redisMasters :
        -  host: 172.26.223.109
           port: 16379
-#          redisSlaves:
-#            - host: 172.26.223.109
-#              port: 26379
-#            - host: 172.26.223.109
-#              port: 6379
+          redisSlaves:
+            - host: 172.26.223.109
+              port: 26379
+            - host: 172.26.223.109
+              port: 6379
 #       -  host: 172.26.223.108
 #          port: 16379
 #          redisSlaves:

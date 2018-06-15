@@ -12,15 +12,15 @@ rains-redisproxy 是一个开源Redis中间件服务，支持redis协议通信�
 
   * **框架特性**
  
-      * 自带连接池，简单稳定且性能高效。
+      * 支持redis通信协议,原有的程序无须改变。
 
-      * 支持读写分离，可配置调度算法 。
+      * 使用eureka,ribbin组件，使得redisProxy自动注册发现与负载 。
 
       * 默认支持一致性哈希分片策略，扩展性强 。
 
       * 支持HA 分布式部署，节点可随意扩展。
 
-      * 管理监控功能丰富，可自动增加减少redis节点部署。
+      * 管理监控功能丰富，可自动增加减少redis节点部署(todo)。
 
       * 使用eureka可以自动注册发现服务，动态调整有效节点，减少配置。
 
@@ -55,12 +55,44 @@ rains-redisproxy 是一个开源Redis中间件服务，支持redis协议通信�
 
 #   Configuration
 
-  ###  [配置详解](https://github.com/hugoDD/rains-redisproxy/wiki/configuration%EF%BC%88%E9%85%8D%E7%BD%AE%E8%AF%A6%E8%A7%A3%EF%BC%89)
 
+    redisproxy:
+      redisPool:
+        connectionTimeout:  5000#链接超时
+        maxActiveConnection:  100 #最大连接数
+        maxIdleConnection:  80
+        minConnection:  10  #最小连接数
+        maxWaitMillisOnBorrow:  500  #等待borrow最大时间
+        initialConnection:  5 #初始连接数
+        timeBetweenEvictionRunsMillis:  60000  
+        minEvictableIdleTimeMillis: 300000
+        minIdleEntries: 1
+        testOnBorrow: true  #获取时是否检验有效性
+        testOnReturn: true  #回收时是否检验有效性
+        testWhileIdle:  true ##使用时是否检验有效性
+      groupNode:
+        - redisMasters :
+           -  host: 172.26.223.109  #主redis ip
+              port: 16379           #主redis 端口
+              redisSlaves:          
+                - host: 172.26.223.109  #从redis ip
+                  port: 26379           #从redis端口
+                - host: 172.26.223.109  #从redis ip
+                  port: 6379            #从redis端口
+    #       -  host: 172.26.223.108     #主redis ip
+    #          port: 16379              #主redis 端口
+    #          redisSlaves:
+    #            - host: 172.26.223.110  #从redis ip
+    #              port: 26379           #从redis端口
+    #            - host: 172.26.223.111  #从redis ip
+    #              port: 36379           #从redis端口
 
+  
 # Prerequisite
 
   *   #### JDK 1.8+
+  
+  *   ### springboot eureka ribbin
 
   *   #### Maven 3.2.x
 
@@ -79,8 +111,8 @@ rains-redisproxy 是一个开源Redis中间件服务，支持redis协议通信�
 ###  [demo](https://github.com/hugoDD/rains-redisproxy/wiki/demo)
 
 
-#性能测试
- 直连redis使用jhm测试
+# 性能测试
+### 直连redis使用jhm测试
 
 | Benchmark                           |  Mode  | Cnt |   Score |     Error  | Units |
 | :-                                  | :-     | :-  | :-       | :-        | :-    |  
@@ -92,7 +124,7 @@ rains-redisproxy 是一个开源Redis中间件服务，支持redis协议通信�
 | RedisClientJhmTest.redisSetCmd      | thrpt  | 20  | 440.543 | ±  67.428 | ops/s |  
 
 
-直连proxy使用jhm测试
+### 直连proxy使用jhm测试
 
 |Benchmark                            |Mode   | Cnt  |  Score  |  Error   |Units |
 |:-                                   |:-      | -:  | -:      |  -       | :-    |
