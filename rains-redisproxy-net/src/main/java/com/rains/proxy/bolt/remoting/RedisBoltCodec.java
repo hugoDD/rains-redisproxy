@@ -2,7 +2,6 @@ package com.rains.proxy.bolt.remoting;
 
 import com.alipay.remoting.ProtocolCode;
 import com.alipay.remoting.codec.Codec;
-import com.alipay.remoting.codec.ProtocolCodeBasedDecoder;
 import com.alipay.remoting.codec.ProtocolCodeBasedEncoder;
 import com.rains.proxy.bolt.protocol.ProtocolBasedDecoder;
 import com.rains.proxy.bolt.protocol.RedisClientProtocol;
