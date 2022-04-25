@@ -15,11 +15,17 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <dependencies>
+      <dependency>
+          <groupId>com.alipay.sofa</groupId>
+          <artifactId>bolt</artifactId>
+          <version>1.6.5</version>
+      </dependency>
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
     </dependency>
-    
+
     <dependency>
         <groupId>com.rains</groupId>
   		<artifactId>rains-redisproxy-core</artifactId>
@@ -83,6 +89,6 @@
           <!--<artifactId>spring-cloud-netflix-eureka-server</artifactId>-->
           <!--<scope>test</scope>-->
       <!--</dependency>-->
-     
+
   </dependencies>
 </project>
