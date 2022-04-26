@@ -12,6 +12,9 @@ import io.netty.channel.ChannelHandler;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * @author ly-dourx
+ */
 public class RedisClientConnectionFactory extends DefaultConnectionFactory {
     public RedisClientConnectionFactory(ConcurrentHashMap<String, UserProcessor<?>> userProcessors,
                                 Configuration configurations) {

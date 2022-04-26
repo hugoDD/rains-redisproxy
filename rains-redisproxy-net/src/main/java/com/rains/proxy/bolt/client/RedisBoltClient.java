@@ -21,11 +21,15 @@ import com.alipay.remoting.*;
 import com.alipay.remoting.config.BoltGenericOption;
 import com.alipay.remoting.log.BoltLoggerFactory;
 import com.alipay.remoting.rpc.RpcClient;
+
 import com.alipay.remoting.rpc.RpcConnectionEventHandler;
-import com.alipay.remoting.rpc.RpcTaskScanner;
+import com.alipay.remoting.rpc.RpcConnectionFactory;
 import com.alipay.remoting.rpc.protocol.UserProcessor;
+import com.rains.proxy.bolt.protocol.RedisProtocol;
+import com.rains.proxy.core.utils.ReflectUtils;
 import org.slf4j.Logger;
 
+import java.lang.reflect.Field;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -37,29 +41,68 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RedisBoltClient extends RpcClient {
 
     private static final Logger logger = BoltLoggerFactory
-            .getLogger("RedisRemoting");
+            .getLogger("RedisBoltClient");
 
-    private final RpcTaskScanner taskScanner = new RpcTaskScanner();
-    private final ConcurrentHashMap<String, UserProcessor<?>> userProcessors = new ConcurrentHashMap();
-    private final ConnectionEventHandler connectionEventHandler = new RpcConnectionEventHandler(this);
-    private final ConnectionEventListener connectionEventListener = new ConnectionEventListener();
-    private ConnectionManager connectionManager;
-    private Reconnector reconnectManager;
-    private RemotingAddressParser addressParser;
-    private DefaultConnectionMonitor connectionMonitor;
-    private ConnectionMonitorStrategy monitorStrategy;
+
+    static {
+        ProtocolManager.registerProtocol(new RedisProtocol(), RedisProtocol.PROTOCOL_CODE);
+    }
 
     public RedisBoltClient() {
-        ConnectionSelectStrategy connectionSelectStrategy = (ConnectionSelectStrategy)this.option(BoltGenericOption.CONNECTION_SELECT_STRATEGY);
+        super();
+
+        ConcurrentHashMap<String, UserProcessor<?>> userProcessors = getUserProcessors();
+        RpcConnectionEventHandler connectionEventHandler = getConnectionEventHandler();
+        ConnectionEventListener connectionEventListener = getConnectionEventListener();
+        ConnectionSelectStrategy connectionSelectStrategy = this.option(BoltGenericOption.CONNECTION_SELECT_STRATEGY);
+
         if (connectionSelectStrategy == null) {
             connectionSelectStrategy = new RandomSelectStrategy(this);
         }
 
         DefaultClientConnectionManager defaultConnectionManager = new DefaultClientConnectionManager(
-                connectionSelectStrategy, new RedisClientConnectionFactory(userProcessors, this),
+                connectionSelectStrategy, new RpcConnectionFactory(userProcessors, this),
                 connectionEventHandler, connectionEventListener);
-        defaultConnectionManager.setAddressParser(this.addressParser);
+        defaultConnectionManager.setAddressParser(this.getAddressParser());
         defaultConnectionManager.startup();
-        this.connectionManager = defaultConnectionManager;
+
+
+
+        this.setConnectionManager(defaultConnectionManager);
+    }
+
+
+
+    private ConcurrentHashMap<String, UserProcessor<?>> getUserProcessors(){
+        try {
+            Field userProcessors = getClass().getSuperclass().getDeclaredField("userProcessors");
+            userProcessors.setAccessible(true);
+           return (ConcurrentHashMap<String, UserProcessor<?>>) userProcessors.get(this);
+        } catch (NoSuchFieldException | IllegalAccessException  e) {
+            logger.error(e.getMessage(),e);
+        }
+        return null;
+    }
+
+    private RpcConnectionEventHandler getConnectionEventHandler(){
+        try {
+            Field connectionEventHandle = getClass().getSuperclass().getDeclaredField("connectionEventHandler");
+            connectionEventHandle.setAccessible(true);
+           return (RpcConnectionEventHandler) connectionEventHandle.get(this);
+        } catch (NoSuchFieldException | IllegalAccessException  e) {
+            logger.error(e.getMessage(),e);
+        }
+        return null;
+    }
+
+    private ConnectionEventListener getConnectionEventListener(){
+        try {
+            Field connectionEventListener = getClass().getSuperclass().getDeclaredField("connectionEventListener");
+            connectionEventListener.setAccessible(true);
+           return (ConnectionEventListener) connectionEventListener.get(this);
+        } catch (NoSuchFieldException | IllegalAccessException  e) {
+            logger.error(e.getMessage(),e);
+        }
+        return null;
     }
 }

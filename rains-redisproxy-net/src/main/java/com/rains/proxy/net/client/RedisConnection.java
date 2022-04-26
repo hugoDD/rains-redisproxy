@@ -18,6 +18,7 @@ package com.rains.proxy.net.client;
 
 
 import com.rains.proxy.core.command.impl.RedisCommand;
+import com.rains.proxy.core.command.impl.ReidisAuthCommand;
 import com.rains.proxy.core.connection.IConnection;
 import com.rains.proxy.core.constants.RedisProxyErrorMsgConstant;
 import com.rains.proxy.core.enums.ChannelState;
@@ -109,6 +110,7 @@ public class RedisConnection implements IConnection {
     /**
      * 发送消息
      */
+    @Override
     public void write(final RedisCommand request, ChannelHandlerContext frontCtx) {
         if (!isAvailable()) {
             open();
@@ -137,6 +139,7 @@ public class RedisConnection implements IConnection {
 
             if (result && success) {
                 backChannel = channelFuture.channel();
+                // todo 加入登录密码
                 state = ChannelState.ALIVE;
                 return true;
             }

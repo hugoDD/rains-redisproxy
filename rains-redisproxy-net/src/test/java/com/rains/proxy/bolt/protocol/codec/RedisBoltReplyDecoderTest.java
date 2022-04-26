@@ -30,9 +30,7 @@ public class RedisBoltReplyDecoderTest extends AbstractRedisReplyTest {
 
 
 
-    static  {
-        ProtocolManager.registerProtocol(new RedisClientProtocol(), RedisClientProtocol.PROTOCOL_CODE);
-    }
+
 
     @Test
     public void testRedisProtocol(){

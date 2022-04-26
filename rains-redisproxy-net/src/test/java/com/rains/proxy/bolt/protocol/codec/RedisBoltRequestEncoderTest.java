@@ -24,10 +24,7 @@ import static org.junit.Assert.assertEquals;
 
 public class RedisBoltRequestEncoderTest extends AbstractRedisReplyTest{
 
-    @Before
-    public void setUp() throws Exception {
-        ProtocolManager.registerProtocol(new RedisClientProtocol(), RedisClientProtocol.PROTOCOL_CODE);
-    }
+
 
     @Test
     public void testRedisProtocol(){

@@ -14,15 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rains.proxy.bolt.client;
+package com.rains.proxy.bolt.demo;
 
 import com.alipay.remoting.ConnectionEventType;
 import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.rpc.RpcClient;
+import com.rains.proxy.bolt.client.RedisBoltClient;
 import com.rains.proxy.bolt.processor.CONNECTEventProcessor;
 import com.rains.proxy.bolt.processor.DISCONNECTEventProcessor;
 import com.rains.proxy.bolt.processor.SimpleClientUserProcessor;
 import com.rains.proxy.core.command.impl.RedisCommand;
+import com.rains.proxy.core.utils.RedisCmdUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,19 +37,19 @@ import java.util.List;
  * @author tsui
  * @version $Id: RpcClientDemoByMain.java, v 0.1 2018-04-10 10:39 tsui Exp $
  */
-public class RpcClientDemoByMain {
+public class RedisClientDemoByMain {
     static Logger             logger                    = LoggerFactory
-                                                            .getLogger(RpcClientDemoByMain.class);
+                                                            .getLogger(RedisClientDemoByMain.class);
 
     static RpcClient          client;
 
-    static String             addr                      = "127.0.0.1:8999";
+    static String             addr                      = "172.26.223.109:6379";
 
     SimpleClientUserProcessor clientUserProcessor       = new SimpleClientUserProcessor();
     CONNECTEventProcessor clientConnectProcessor    = new CONNECTEventProcessor();
     DISCONNECTEventProcessor clientDisConnectProcessor = new DISCONNECTEventProcessor();
 
-    public RpcClientDemoByMain() {
+    public RedisClientDemoByMain() {
         // 1. create a rpc client
         client = new RedisBoltClient();
         // 2. add processor for connect and close event if you need
@@ -58,7 +60,7 @@ public class RpcClientDemoByMain {
     }
 
     public static void main(String[] args) {
-        new RpcClientDemoByMain();
+        new RedisClientDemoByMain();
         RedisCommand redisCommand = new RedisCommand();
         redisCommand.setArgCount(3);
         List<byte[]> cmdArgs = new ArrayList<>();
@@ -67,6 +69,14 @@ public class RpcClientDemoByMain {
         cmdArgs.add("myvalue".getBytes());
         redisCommand.setArgs(cmdArgs);
         try {
+            RedisCommand ping = RedisCmdUtils.createCmd("ping");
+            RedisCommand auth = RedisCmdUtils.createCmd("auth Youcloud@2022");
+            String pingRes = (String) client.invokeSync(addr, ping, 3000);
+            System.out.println("invoke ping sync result = [" + pingRes + "]");
+
+            String authRes = (String) client.invokeSync(addr, auth, 3000);
+            System.out.println("invoke auth sync result = [" + authRes + "]");
+
             String res = (String) client.invokeSync(addr, redisCommand, 3000);
             System.out.println("invoke sync result = [" + res + "]");
         } catch (RemotingException e) {
