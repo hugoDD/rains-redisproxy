@@ -20,12 +20,12 @@ package com.rains.proxy.bolt.client;
 import com.alipay.remoting.*;
 import com.alipay.remoting.config.BoltGenericOption;
 import com.alipay.remoting.log.BoltLoggerFactory;
-import com.alipay.remoting.rpc.RpcClient;
+import com.alipay.remoting.rpc.*;
 
-import com.alipay.remoting.rpc.RpcConnectionEventHandler;
-import com.alipay.remoting.rpc.RpcConnectionFactory;
 import com.alipay.remoting.rpc.protocol.UserProcessor;
 import com.rains.proxy.bolt.protocol.RedisProtocol;
+import com.rains.proxy.bolt.remoting.RedisBoltCommandFactory;
+import com.rains.proxy.bolt.remoting.RedisBoltRemoting;
 import com.rains.proxy.core.utils.ReflectUtils;
 import org.slf4j.Logger;
 
@@ -71,7 +71,13 @@ public class RedisBoltClient extends RpcClient {
         this.setConnectionManager(defaultConnectionManager);
     }
 
+    @Override
+    public void startup() throws LifeCycleException {
+        super.startup();
 
+        this.rpcRemoting = new RedisBoltRemoting(new RedisBoltCommandFactory(), this.getAddressParser(),
+                this.getConnectionManager());
+    }
 
     private ConcurrentHashMap<String, UserProcessor<?>> getUserProcessors(){
         try {
