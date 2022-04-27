@@ -43,7 +43,8 @@ public class RedisClientDemoByMain {
 
     static RpcClient          client;
 
-    static String             addr                      = "172.26.223.109:6379";
+//    static String             addr                      = "172.26.223.109:6379?protocol=1";
+    static String             addr                      = "localhost:6379?_PROTOCOL=0";
 
     SimpleClientUserProcessor clientUserProcessor       = new SimpleClientUserProcessor();
     CONNECTEventProcessor clientConnectProcessor    = new CONNECTEventProcessor();
@@ -70,7 +71,8 @@ public class RedisClientDemoByMain {
         redisCommand.setArgs(cmdArgs);
         try {
             RedisCommand ping = RedisCmdUtils.createCmd("ping");
-            RedisCommand auth = RedisCmdUtils.createCmd("auth Youcloud@2022");
+//            RedisCommand auth = RedisCmdUtils.createCmd("auth Youcloud@2022");
+            RedisCommand auth = RedisCmdUtils.createCmd("auth 123456");
             String pingRes = (String) client.invokeSync(addr, ping, 3000);
             System.out.println("invoke ping sync result = [" + pingRes + "]");
 

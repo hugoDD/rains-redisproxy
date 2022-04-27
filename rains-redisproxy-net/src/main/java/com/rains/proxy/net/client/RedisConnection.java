@@ -18,7 +18,6 @@ package com.rains.proxy.net.client;
 
 
 import com.rains.proxy.core.command.impl.RedisCommand;
-import com.rains.proxy.core.command.impl.ReidisAuthCommand;
 import com.rains.proxy.core.connection.IConnection;
 import com.rains.proxy.core.constants.RedisProxyErrorMsgConstant;
 import com.rains.proxy.core.enums.ChannelState;

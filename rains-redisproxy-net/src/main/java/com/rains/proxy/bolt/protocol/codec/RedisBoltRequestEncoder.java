@@ -17,6 +17,10 @@
 package com.rains.proxy.bolt.protocol.codec;
 
 import com.alipay.remoting.CommandEncoder;
+import com.alipay.remoting.rpc.protocol.RpcCommandEncoder;
+import com.alipay.remoting.rpc.protocol.RpcRequestCommand;
+import com.rains.proxy.bolt.remoting.RedisRequestCommand;
+import com.rains.proxy.core.command.IRedisCommand;
 import com.rains.proxy.core.command.impl.RedisCommand;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -33,16 +37,20 @@ import java.io.Serializable;
  * @Description:  request编码
  * @date 2018/5/24  9:26
  */
-public class RedisBoltRequestEncoder implements CommandEncoder {
+public class RedisBoltRequestEncoder extends RpcCommandEncoder implements CommandEncoder {
 	private static final Logger logger = LoggerFactory.getLogger(RedisBoltRequestEncoder.class);
 
 	@Override
 	public void encode(ChannelHandlerContext channelHandlerContext, Serializable msg, ByteBuf byteBuf) throws Exception {
-		if(msg instanceof RedisCommand){
-			((RedisCommand)msg).encode(byteBuf);
+		if(msg instanceof RedisRequestCommand){
+			IRedisCommand redisCommand=	((RedisRequestCommand) msg).getRequestObject();
+			redisCommand.encode(byteBuf);
 			if(logger.isDebugEnabled()){
 				logger.debug("request编码后协议文本内容:{}",byteBuf.toString(CharsetUtil.UTF_8).replaceAll("\r\n","\\\\r\\\\n"));
 			}
+		}else  {
+			//super.encode(channelHandlerContext,msg,byteBuf);
 		}
+
 	}
 }

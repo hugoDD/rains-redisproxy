@@ -6,7 +6,7 @@ import com.alipay.remoting.log.BoltLoggerFactory;
 import com.alipay.remoting.rpc.RpcClientRemoting;
 import org.slf4j.Logger;
 
-public class RedisBoltRemoting extends RpcClientRemoting {
+public class RedisBoltRemoting<T> extends RpcClientRemoting {
     private static final Logger logger = BoltLoggerFactory.getLogger("RedisBoltRemoting");
     public RedisBoltRemoting(CommandFactory commandFactory, RemotingAddressParser addressParser, ConnectionManager connectionManager) {
         super(commandFactory, addressParser, connectionManager);

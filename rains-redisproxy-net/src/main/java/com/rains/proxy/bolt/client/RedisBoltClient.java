@@ -23,10 +23,9 @@ import com.alipay.remoting.log.BoltLoggerFactory;
 import com.alipay.remoting.rpc.*;
 
 import com.alipay.remoting.rpc.protocol.UserProcessor;
-import com.rains.proxy.bolt.protocol.RedisProtocol;
+import com.rains.proxy.bolt.protocol.RedisClientProtocol;
 import com.rains.proxy.bolt.remoting.RedisBoltCommandFactory;
 import com.rains.proxy.bolt.remoting.RedisBoltRemoting;
-import com.rains.proxy.core.utils.ReflectUtils;
 import org.slf4j.Logger;
 
 import java.lang.reflect.Field;
@@ -45,7 +44,7 @@ public class RedisBoltClient extends RpcClient {
 
 
     static {
-        ProtocolManager.registerProtocol(new RedisProtocol(), RedisProtocol.PROTOCOL_CODE);
+        ProtocolManager.registerProtocol(new RedisClientProtocol(), RedisClientProtocol.PROTOCOL_CODE);
     }
 
     public RedisBoltClient() {

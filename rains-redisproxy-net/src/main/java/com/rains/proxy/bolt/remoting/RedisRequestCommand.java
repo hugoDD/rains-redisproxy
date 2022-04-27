@@ -8,9 +8,10 @@ import com.alipay.remoting.rpc.RequestCommand;
 import com.alipay.remoting.rpc.protocol.RpcCommandCode;
 import com.alipay.remoting.serialization.SerializerManager;
 import com.alipay.remoting.util.IDGenerator;
+import com.rains.proxy.core.command.IRedisCommand;
 
 public class RedisRequestCommand extends RequestCommand {
-    private  Object requestObject;
+    private IRedisCommand requestObject;
 
     /**
      * create request command without id
@@ -23,11 +24,17 @@ public class RedisRequestCommand extends RequestCommand {
      * create request command with id and request object
      * @param request request object
      */
-    public RedisRequestCommand(Object request) {
+    public RedisRequestCommand(IRedisCommand request) {
         super(RpcCommandCode.RPC_REQUEST);
         this.requestObject = request;
         this.setId(IDGenerator.nextId());
     }
 
+    public IRedisCommand getRequestObject() {
+        return requestObject;
+    }
 
+    public void setRequestObject(IRedisCommand requestObject) {
+        this.requestObject = requestObject;
+    }
 }

@@ -23,6 +23,7 @@ import com.alipay.remoting.rpc.ResponseCommand;
 import com.alipay.remoting.rpc.exception.RpcServerException;
 import com.alipay.remoting.rpc.protocol.RpcRequestCommand;
 import com.alipay.remoting.rpc.protocol.RpcResponseCommand;
+import com.rains.proxy.core.command.IRedisCommand;
 
 import java.net.InetSocketAddress;
 
@@ -33,7 +34,7 @@ import java.net.InetSocketAddress;
 public class RedisBoltCommandFactory implements CommandFactory {
     @Override
     public RedisRequestCommand createRequestCommand(Object requestObject) {
-        return new RedisRequestCommand(requestObject);
+        return new RedisRequestCommand((IRedisCommand) requestObject);
     }
 
     @Override
