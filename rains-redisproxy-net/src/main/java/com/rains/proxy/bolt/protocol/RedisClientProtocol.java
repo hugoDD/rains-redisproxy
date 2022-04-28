@@ -6,6 +6,7 @@ import com.alipay.remoting.rpc.protocol.RpcCommandHandler;
 import com.alipay.remoting.rpc.protocol.RpcHeartbeatTrigger;
 import com.rains.proxy.bolt.protocol.codec.RedisBoltReplyDecoder;
 import com.rains.proxy.bolt.protocol.codec.RedisBoltRequestEncoder;
+import com.rains.proxy.bolt.remoting.RedisBoltCommandFactory;
 
 public class RedisClientProtocol implements Protocol {
     public static final byte PROTOCOL_CODE = 0;
@@ -19,7 +20,7 @@ public class RedisClientProtocol implements Protocol {
     public RedisClientProtocol() {
         this.encoder = new RedisBoltRequestEncoder();
         this.decoder = new RedisBoltReplyDecoder();
-        this.commandFactory = new RpcCommandFactory();
+        this.commandFactory = new RedisBoltCommandFactory();
         this.heartbeatTrigger = new RpcHeartbeatTrigger(this.commandFactory);
         this.commandHandler = new RpcCommandHandler(this.commandFactory);
     }

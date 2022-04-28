@@ -60,7 +60,7 @@ public class RedisBoltClient extends RpcClient {
         }
 
         DefaultClientConnectionManager defaultConnectionManager = new DefaultClientConnectionManager(
-                connectionSelectStrategy, new RpcConnectionFactory(userProcessors, this),
+                connectionSelectStrategy, new RedisClientConnectionFactory(userProcessors, this),
                 connectionEventHandler, connectionEventListener);
         defaultConnectionManager.setAddressParser(this.getAddressParser());
         defaultConnectionManager.startup();

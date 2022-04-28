@@ -17,8 +17,10 @@
 package com.rains.proxy.bolt.demo;
 
 import com.alipay.remoting.ConnectionEventType;
+import com.alipay.remoting.Url;
 import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.rpc.RpcClient;
+import com.alipay.remoting.rpc.RpcConfigs;
 import com.rains.proxy.bolt.client.RedisBoltClient;
 import com.rains.proxy.bolt.processor.CONNECTEventProcessor;
 import com.rains.proxy.bolt.processor.DISCONNECTEventProcessor;
@@ -43,8 +45,8 @@ public class RedisClientDemoByMain {
 
     static RpcClient          client;
 
-//    static String             addr                      = "172.26.223.109:6379?protocol=1";
-    static String             addr                      = "localhost:6379?_PROTOCOL=0";
+    static String             addr                      = "172.26.223.109:6379?_PROTOCOL=0";//+ RpcConfigs.CONNECT_TIMEOUT_KEY+"=30000000";
+//    static String             addr                      = "localhost:6379?_PROTOCOL=0";
 
     SimpleClientUserProcessor clientUserProcessor       = new SimpleClientUserProcessor();
     CONNECTEventProcessor clientConnectProcessor    = new CONNECTEventProcessor();
@@ -70,14 +72,17 @@ public class RedisClientDemoByMain {
         cmdArgs.add("myvalue".getBytes());
         redisCommand.setArgs(cmdArgs);
         try {
+            RedisCommand auth = RedisCmdUtils.createCmd("auth Youcloud@2022");
             RedisCommand ping = RedisCmdUtils.createCmd("ping");
-//            RedisCommand auth = RedisCmdUtils.createCmd("auth Youcloud@2022");
-            RedisCommand auth = RedisCmdUtils.createCmd("auth 123456");
-            String pingRes = (String) client.invokeSync(addr, ping, 3000);
-            System.out.println("invoke ping sync result = [" + pingRes + "]");
 
             String authRes = (String) client.invokeSync(addr, auth, 3000);
             System.out.println("invoke auth sync result = [" + authRes + "]");
+
+//            RedisCommand auth = RedisCmdUtils.createCmd("auth 123456");
+            String pingRes = (String) client.invokeSync(addr, ping, 3000);
+            System.out.println("invoke ping sync result = [" + pingRes + "]");
+
+
 
             String res = (String) client.invokeSync(addr, redisCommand, 3000);
             System.out.println("invoke sync result = [" + res + "]");
