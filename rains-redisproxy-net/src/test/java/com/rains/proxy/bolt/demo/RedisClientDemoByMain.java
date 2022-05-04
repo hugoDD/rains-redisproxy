@@ -79,13 +79,16 @@ public class RedisClientDemoByMain {
             IRedisReply authRes = (IRedisReply) client.invokeSync(addr, auth, 30000000);
             System.out.println("invoke auth sync result = [" + authRes + "]");
 
-//            IRedisReply pingRes = (IRedisReply) client.invokeSync(addr, ping, 3000);
-//            System.out.println("invoke ping sync result = [" + pingRes + "]");
-//
-//
-//
-//            IRedisReply res = (IRedisReply) client.invokeSync(addr, setCmd, 3000);
-//            System.out.println("invoke sync result = [" + res + "]");
+            IRedisReply pingRes = (IRedisReply) client.invokeSync(addr, ping, 3000);
+            System.out.println("invoke ping sync result = [" + pingRes + "]");
+
+
+
+            IRedisReply setCmdRes = (IRedisReply) client.invokeSync(addr, setCmd, 3000);
+            System.out.println("invoke sync result = [" + setCmdRes + "]");
+
+            IRedisReply getCmdRes = (IRedisReply) client.invokeSync(addr, getCmd, 3000);
+            System.out.println("invoke sync result = [" + getCmdRes + "]");
         } catch (RemotingException e) {
             String errMsg = "RemotingException caught in oneway!";
             logger.error(errMsg, e);
