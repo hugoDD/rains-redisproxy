@@ -83,19 +83,19 @@ public class MultyBulkRedisReply extends CommonRedisReply implements Serializabl
 	private static final Logger logger = LoggerFactory.getLogger(MultyBulkRedisReply.class);
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 5695076544459040408L;
 
 	protected List<IRedisReply> list = new ArrayList<IRedisReply>();
-	
+
 	private int count;
 
 	public void setCount(int count) {
 		this.count = count;
 	}
-	
-	
+
+
 	/**
 	 * @return the list
 	 */
@@ -116,13 +116,7 @@ public class MultyBulkRedisReply extends CommonRedisReply implements Serializabl
 		super(Type.MULTYBULK);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.wanda.ffan.redis.proxy.core.reply.impl.AbstractRedisReply#doEncode
-	 * (io.netty.buffer.ByteBuf)
-	 */
+
 	@Override
 	public void doEncode(ByteBuf out) {
 

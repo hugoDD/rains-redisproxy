@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.rains.proxy.core.reply.impl;
 
@@ -17,7 +17,7 @@ public abstract class AbstractRedisReply implements IRedisReply {
 	private Type type;
 
 	/**
-	 * 
+	 *
 	 */
 	public AbstractRedisReply() {
 		super();
@@ -31,24 +31,13 @@ public abstract class AbstractRedisReply implements IRedisReply {
 		this.type = type;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.wanda.ffan.redis.proxy.core.reply.IRedisReply#getType()
-	 */
 	@Override
 	public Type getType() {
 
 		return type;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.wanda.ffan.redis.proxy.core.reply.IRedisReply#setType(com.wanda.ffan
-	 * .redis.proxy.core.enums.Type)
-	 */
+
 	@Override
 	public void setType(Type type) {
 		this.type = type;
@@ -62,20 +51,14 @@ public abstract class AbstractRedisReply implements IRedisReply {
 	public void writeStart(ByteBuf byteBuf) {
 		byteBuf.writeByte(type.getCode());
 	}
-	
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.wanda.ffan.redis.proxy.core.reply.IRedisReply#encode(io.netty.buffer
-	 * .ByteBuf)
-	 */
+
+
+
 	@Override
 	public void encode(ByteBuf out) {
 		writeStart(out);
 	    doEncode(out);
 	}
-	
+
 	public abstract void doEncode(ByteBuf out);
 }

@@ -1,10 +1,12 @@
 /**
- * 
+ *
  */
 package com.rains.proxy.core.reply.impl;
 
 
 import com.rains.proxy.core.enums.Type;
+
+import java.util.Arrays;
 
 /**
  * @author liubing
@@ -22,4 +24,10 @@ public abstract class CommonRedisReply extends AbstractRedisReply {
 		this.value = value;
 	}
 
+	@Override
+	public String toString() {
+		return "CommonRedisReply{" +
+				"value=" + new String(value) +
+				'}';
+	}
 }

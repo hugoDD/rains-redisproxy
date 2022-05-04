@@ -18,6 +18,8 @@ package com.rains.proxy.bolt.protocol.codec;
 
 
 import com.alipay.remoting.CommandDecoder;
+import com.alipay.remoting.ResponseStatus;
+import com.rains.proxy.bolt.remoting.RedisRequestCommand;
 import com.rains.proxy.bolt.remoting.RedisResponseCommand;
 import com.rains.proxy.core.constants.RedisConstants;
 import com.rains.proxy.core.enums.Type;
@@ -88,6 +90,8 @@ public class RedisBoltReplyDecoder implements CommandDecoder  {
             readArrayReply(in, (MultyBulkRedisReply) redisReply);
         }
         RedisResponseCommand responseCommand = new RedisResponseCommand(redisReply);
+        responseCommand.setId(RedisRequestCommand.pollRequestId());
+        responseCommand.setResponseStatus(ResponseStatus.SUCCESS);
         out.add(responseCommand);
         redisReply = null;
         //checkpoint(ReplyState.READ_INIT);

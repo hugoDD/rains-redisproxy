@@ -17,11 +17,13 @@
 package com.rains.proxy.bolt.protocol.codec;
 
 import com.alipay.remoting.CommandEncoder;
+import com.alipay.remoting.rpc.HeartbeatCommand;
 import com.alipay.remoting.rpc.protocol.RpcCommandEncoder;
 import com.alipay.remoting.rpc.protocol.RpcRequestCommand;
 import com.rains.proxy.bolt.remoting.RedisRequestCommand;
 import com.rains.proxy.core.command.IRedisCommand;
 import com.rains.proxy.core.command.impl.RedisCommand;
+import com.rains.proxy.core.utils.RedisCmdUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.CharsetUtil;
@@ -45,11 +47,14 @@ public class RedisBoltRequestEncoder extends RpcCommandEncoder implements Comman
 		if(msg instanceof RedisRequestCommand){
 			IRedisCommand redisCommand=	((RedisRequestCommand) msg).getRequestObject();
 			redisCommand.encode(byteBuf);
-			if(logger.isDebugEnabled()){
-				logger.debug("request编码后协议文本内容:{}",byteBuf.toString(CharsetUtil.UTF_8).replaceAll("\r\n","\\\\r\\\\n"));
-			}
-		}else  {
-			//super.encode(channelHandlerContext,msg,byteBuf);
+
+		}else if(msg instanceof HeartbeatCommand) {
+			RedisCommand ping = RedisCmdUtils.createCmd("ping");
+			ping.encode(byteBuf);
+
+		}
+		if(logger.isDebugEnabled()){
+			logger.debug("request编码后协议文本内容:{}",byteBuf.toString(CharsetUtil.UTF_8).replaceAll("\r\n","\\\\r\\\\n"));
 		}
 
 	}

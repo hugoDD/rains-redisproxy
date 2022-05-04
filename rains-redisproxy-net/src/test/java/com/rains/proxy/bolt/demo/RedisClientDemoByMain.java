@@ -17,16 +17,17 @@
 package com.rains.proxy.bolt.demo;
 
 import com.alipay.remoting.ConnectionEventType;
-import com.alipay.remoting.Url;
+import com.alipay.remoting.config.Configs;
 import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.rpc.RpcClient;
-import com.alipay.remoting.rpc.RpcConfigs;
 import com.rains.proxy.bolt.client.RedisBoltClient;
 import com.rains.proxy.bolt.processor.CONNECTEventProcessor;
 import com.rains.proxy.bolt.processor.DISCONNECTEventProcessor;
 import com.rains.proxy.bolt.processor.SimpleClientUserProcessor;
 import com.rains.proxy.core.command.impl.RedisCommand;
+import com.rains.proxy.core.reply.IRedisReply;
 import com.rains.proxy.core.utils.RedisCmdUtils;
+import io.netty.buffer.ByteBuf;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,14 +46,15 @@ public class RedisClientDemoByMain {
 
     static RpcClient          client;
 
-    static String             addr                      = "172.26.223.109:6379?_PROTOCOL=0";//+ RpcConfigs.CONNECT_TIMEOUT_KEY+"=30000000";
-//    static String             addr                      = "localhost:6379?_PROTOCOL=0";
+//    static String             addr                      = "172.26.223.109:6379?protocol=1";
+    static String             addr                      = "localhost:6379?_PROTOCOL=0";
 
     SimpleClientUserProcessor clientUserProcessor       = new SimpleClientUserProcessor();
     CONNECTEventProcessor clientConnectProcessor    = new CONNECTEventProcessor();
     DISCONNECTEventProcessor clientDisConnectProcessor = new DISCONNECTEventProcessor();
 
     public RedisClientDemoByMain() {
+        System.setProperty(Configs.TCP_IDLE_SWITCH, "false");
         // 1. create a rpc client
         client = new RedisBoltClient();
         // 2. add processor for connect and close event if you need
@@ -63,29 +65,27 @@ public class RedisClientDemoByMain {
     }
 
     public static void main(String[] args) {
-        new RedisClientDemoByMain();
-        RedisCommand redisCommand = new RedisCommand();
-        redisCommand.setArgCount(3);
-        List<byte[]> cmdArgs = new ArrayList<>();
-        cmdArgs.add("set".getBytes());
-        cmdArgs.add("mykey".getBytes());
-        cmdArgs.add("myvalue".getBytes());
-        redisCommand.setArgs(cmdArgs);
-        try {
-            RedisCommand auth = RedisCmdUtils.createCmd("auth Youcloud@2022");
-            RedisCommand ping = RedisCmdUtils.createCmd("ping");
 
-            String authRes = (String) client.invokeSync(addr, auth, 3000);
+        new RedisClientDemoByMain();
+
+
+        RedisCommand setCmd = RedisCmdUtils.createCmd("set mykey myvalue");
+        RedisCommand getCmd = RedisCmdUtils.createCmd("get mykey");
+        try {
+            RedisCommand ping = RedisCmdUtils.createCmd("ping");
+//            RedisCommand auth = RedisCmdUtils.createCmd("auth Youcloud@2022");
+            RedisCommand auth = RedisCmdUtils.createCmd("auth 123456");
+
+            IRedisReply authRes = (IRedisReply) client.invokeSync(addr, auth, 30000000);
             System.out.println("invoke auth sync result = [" + authRes + "]");
 
-//            RedisCommand auth = RedisCmdUtils.createCmd("auth 123456");
-            String pingRes = (String) client.invokeSync(addr, ping, 3000);
-            System.out.println("invoke ping sync result = [" + pingRes + "]");
-
-
-
-            String res = (String) client.invokeSync(addr, redisCommand, 3000);
-            System.out.println("invoke sync result = [" + res + "]");
+//            IRedisReply pingRes = (IRedisReply) client.invokeSync(addr, ping, 3000);
+//            System.out.println("invoke ping sync result = [" + pingRes + "]");
+//
+//
+//
+//            IRedisReply res = (IRedisReply) client.invokeSync(addr, setCmd, 3000);
+//            System.out.println("invoke sync result = [" + res + "]");
         } catch (RemotingException e) {
             String errMsg = "RemotingException caught in oneway!";
             logger.error(errMsg, e);
@@ -94,5 +94,13 @@ public class RedisClientDemoByMain {
             logger.error("interrupted!");
         }
         client.shutdown();
+    }
+
+    protected String readToStr(ByteBuf buf, int len){
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < len; i++) {
+            sb.append((char)buf.readByte());
+        }
+        return sb.toString();
     }
 }
