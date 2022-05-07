@@ -86,8 +86,6 @@ public class ServerConfiguration {
     public RedisServerMasterCluster redisServerMasterCluster(RedisProxyConfiguration redisProxyConfiguration, @Qualifier("loadMasterBalance") LoadBalance loadMasterBalance, @Qualifier("loadSlaveBalance") LoadBalance loadSlaveBalance){
         List<RedisServerClusterBean> list = new ArrayList<>();
 
-//        RedisPoolConfig poolConfig = new RedisPoolConfig();
-//        BeanUtils.copyProperties(redisProxyConfiguration.getRedisPool(),poolConfig);
 
         RedisProxyPoolConfig poolConfig =redisProxyConfiguration.getRedisPool();
 

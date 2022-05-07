@@ -14,7 +14,6 @@ import org.springframework.context.annotation.Bean;
  * @date 2018年 05 月  18日  15:15
  */
 @SpringBootApplication
-@EnableAutoConfiguration
 public class RedisProxyMockTest {
 
     @Bean(name="loadMasterBalance")

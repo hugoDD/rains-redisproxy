@@ -20,10 +20,10 @@ public class RedisProxyGroupNode implements Serializable {
 
 
 	private List<RedisProxyMaster> redisMasters;
-	
-	private String redisProxyHost;//主机名
-	
-	private int redisProxyPort;//端口号
+	//主机名
+	private String redisProxyHost;
+	//端口号
+	private int redisProxyPort;
 	
 	private String algorithmRef;
 	

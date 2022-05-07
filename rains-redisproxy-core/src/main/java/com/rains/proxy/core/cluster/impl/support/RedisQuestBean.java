@@ -5,16 +5,15 @@ package com.rains.proxy.core.cluster.impl.support;
 
 /**
  * redisproxy 接受请求中间类
- * @author liubing
  *
  */
 public class RedisQuestBean {
-	
-	private String command;//命令
-	
-	private byte[] key;//关键字
-	
-	private boolean isWrite;//是否写
+	/**命令*/
+	private String command;
+	/**关键字*/
+	private byte[] key;
+	 /**是否写*/
+	private boolean isWrite;
 	
 	/**
 	 * @param command

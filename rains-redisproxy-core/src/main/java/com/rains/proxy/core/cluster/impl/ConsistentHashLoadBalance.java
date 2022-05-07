@@ -26,13 +26,12 @@ public class ConsistentHashLoadBalance extends AbstractLoadBalance {
 		
 	}
 	
-	/* (non-Javadoc)
-	 * @see com.wanda.ffan.redis.proxy.core.cluster.impl.AbstractLoadBalance#doSelect(com.wanda.ffan.redis.proxy.core.cluster.impl.support.RedisQuestBean, java.util.List)
-	 */
+
 	@Override
 	protected RedisServerBean doSelect(RedisQuestBean redisQuestBean,
                                        List<RedisServerBean> ffanRedisMasterServers) {
-		Hashing hashFunction = new MurmurHash(); // hash函数实例
+		// hash函数实例
+		Hashing hashFunction = new MurmurHash();
 		ConsistentHash<RedisServerBean> consistentHash=new ConsistentHash<RedisServerBean>(hashFunction, ffanRedisMasterServers.size(), ffanRedisMasterServers);
 		RedisServerBean ffanRedisServerBean=consistentHash.getBytes(redisQuestBean.getKey());
 		return ffanRedisServerBean;

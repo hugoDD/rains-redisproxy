@@ -4,13 +4,14 @@ import com.alipay.remoting.*;
 import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.exception.SerializationException;
 import com.alipay.remoting.log.BoltLoggerFactory;
-import com.alipay.remoting.rpc.ResponseCommand;
-import com.alipay.remoting.rpc.RpcClientRemoting;
-import com.alipay.remoting.rpc.RpcResponseResolver;
+import com.alipay.remoting.rpc.*;
 import com.alipay.remoting.util.RemotingUtil;
 import org.slf4j.Logger;
 
-public class RedisBoltRemoting<T> extends RpcClientRemoting {
+/**
+ * @author ly-dourx
+ */
+public class RedisBoltRemoting extends RpcClientRemoting {
     private static final Logger logger = BoltLoggerFactory.getLogger("RedisBoltRemoting");
     public RedisBoltRemoting(CommandFactory commandFactory, RemotingAddressParser addressParser, ConnectionManager connectionManager) {
         super(commandFactory, addressParser, connectionManager);
@@ -51,5 +52,18 @@ public class RedisBoltRemoting<T> extends RpcClientRemoting {
 
         return RedisBoltResponseResolver.resolveResponseObject(responseCommand,
                 RemotingUtil.parseRemoteAddress(conn.getChannel()));
+    }
+
+
+    /**
+     * @see com.alipay.remoting.BaseRemoting#createInvokeFuture(Connection, RemotingCommand, InvokeContext, InvokeCallback)
+     */
+    @Override
+    protected InvokeFuture createInvokeFuture(Connection conn, RemotingCommand request,
+                                              InvokeContext invokeContext,
+                                              InvokeCallback invokeCallback) {
+        return new DefaultInvokeFuture(request.getId(), new RedisBoltInvokeCallbackListener(
+                RemotingUtil.parseRemoteAddress(conn.getChannel())), invokeCallback, request
+                .getProtocolCode().getFirstByte(), this.getCommandFactory(), invokeContext);
     }
 }

@@ -45,25 +45,25 @@ public class RedisServerMasterCluster implements Serializable {
 
     private List<RedisServerClusterBean> redisServerClusterBeans = new ArrayList<RedisServerClusterBean>();
 
-    private Map<String, RedisServerClusterBean> redisServerClusterBeanMap = new HashMap<String, RedisServerClusterBean>();// key 相当于 zk 路径,而不是值
-
+    /** key 相当于 zk 路径,而不是值*/
+    private Map<String, RedisServerClusterBean> redisServerClusterBeanMap = new HashMap<>();
     /**
      * 一主多从模式
      */
-    private Map<String, List<RedisServerBean>> masterClusters = new HashMap<String, List<RedisServerBean>>();// key 相当于 zk 路径,而不是值
+    private Map<String, List<RedisServerBean>> masterClusters = new HashMap<String, List<RedisServerBean>>();
 
     /**
      * 主集合
      ***/
-    private List<RedisServerBean> masters = new ArrayList<RedisServerBean>();
-
-    private String redisProxyHost;//主机名
-
-    private int redisProxyPort=6379;//端口号
-
-    private LoadBalance loadMasterBalance;//主的一致性算法
-
-    private Map<String, AbstractPoolClient> redisClientBeanMap = new HashMap<String, AbstractPoolClient>();//key 代表实际的值
+    private List<RedisServerBean> masters = new ArrayList<>();
+    /**主机名*/
+    private String redisProxyHost;
+    /**端口号*/
+    private int redisProxyPort=6379;
+    /**主的一致性算法*/
+    private LoadBalance loadMasterBalance;
+    /**key 代表实际的值*/
+    private Map<String, AbstractPoolClient> redisClientBeanMap = new HashMap<String, AbstractPoolClient>();
 
     public RedisServerMasterCluster(
             List<RedisServerClusterBean> redisServerClusterBeans) {

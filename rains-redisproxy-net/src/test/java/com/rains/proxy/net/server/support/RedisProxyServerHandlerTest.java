@@ -32,7 +32,7 @@ import static org.junit.Assert.assertTrue;
  * @date 2018年 05 月  24日  11:37
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = RedisProxyConfigurationTest.class)
+@SpringBootTest(classes = RedisProxyConfigurationTest.class,webEnvironment= SpringBootTest.WebEnvironment.NONE)
 public class RedisProxyServerHandlerTest {
 
     @Autowired
@@ -43,6 +43,17 @@ public class RedisProxyServerHandlerTest {
         RedisProxyServer redisServer = new RedisProxyServer(redisServerMasterCluster);
     }
 
+    @Test
+    public void serverHandler(){
+        RedisCommand redisCommand = getRedisCommand("info");
+        EmbeddedChannel channel = new EmbeddedChannel(new RedisServerHandler(redisServerMasterCluster.getRedisClientBeanMap(),redisServerMasterCluster));
+        channel.writeInbound(redisCommand);
+        channel.flushInbound();
+        assertTrue(channel.finish());
+        IRedisReply redisReply =channel.readOutbound();
+        assertNotNull(redisReply);
+        assertTrue(redisReply instanceof StatusRedisReply);
+    }
 
 
     @Test

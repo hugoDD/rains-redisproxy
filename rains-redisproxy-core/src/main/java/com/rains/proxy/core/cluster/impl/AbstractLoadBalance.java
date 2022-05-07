@@ -39,9 +39,7 @@ public abstract class AbstractLoadBalance implements LoadBalance {
 		this.ffanRedisServerMasterCluster=ffanRedisServerMasterCluster;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.wanda.ffan.redis.proxy.core.cluster.LoadBalance#select(com.wanda.ffan.redis.proxy.core.cluster.impl.support.RedisQuestBean)
-	 */
+
 	@Override
 	public RedisServerBean select(RedisQuestBean redisQuestBean, RedisServerBean ffanRedisMasterServer) {
 		if(redisQuestBean.isWrite()&&ffanRedisMasterServer==null){//写
@@ -74,7 +72,8 @@ public abstract class AbstractLoadBalance implements LoadBalance {
 	/**
 	 * @param ffanRedisServerMasterCluster the ffanRedisServerMasterCluster to set
 	 */
-	public void setFfanRedisServerMasterCluster(
+	@Override
+    public void setFfanRedisServerMasterCluster(
 			RedisServerMasterCluster ffanRedisServerMasterCluster) {
 		this.ffanRedisServerMasterCluster = ffanRedisServerMasterCluster;
 	}

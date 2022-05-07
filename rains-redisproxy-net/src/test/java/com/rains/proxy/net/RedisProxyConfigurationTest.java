@@ -11,7 +11,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @date 2018年 05 月  18日  15:15
  */
 @SpringBootApplication
-@EnableAutoConfiguration
 public class RedisProxyConfigurationTest {
 
 
