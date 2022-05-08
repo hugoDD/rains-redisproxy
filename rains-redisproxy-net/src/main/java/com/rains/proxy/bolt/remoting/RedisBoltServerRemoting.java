@@ -1,21 +1,12 @@
 package com.rains.proxy.bolt.remoting;
 
-import com.alipay.remoting.*;
-import com.alipay.remoting.exception.SerializationException;
+import com.alipay.remoting.CommandFactory;
+import com.alipay.remoting.ConnectionManager;
+import com.alipay.remoting.DefaultConnectionManager;
+import com.alipay.remoting.RemotingAddressParser;
 import com.alipay.remoting.rpc.RpcServerRemoting;
 
-/**
- * @author ly-dourx
- */
 public class RedisBoltServerRemoting extends RpcServerRemoting {
-
-    /** address parser to get custom args */
-    protected RemotingAddressParser addressParser;
-
-    /** connection manager */
-    protected ConnectionManager     connectionManager;
-
-
     public RedisBoltServerRemoting(CommandFactory commandFactory) {
         super(commandFactory);
     }
@@ -23,18 +14,16 @@ public class RedisBoltServerRemoting extends RpcServerRemoting {
     public RedisBoltServerRemoting(CommandFactory commandFactory, RemotingAddressParser addressParser, DefaultConnectionManager connectionManager) {
         super(commandFactory, addressParser, connectionManager);
     }
-
-    @Override
-    protected RemotingCommand toRemotingCommand(Object request, Connection conn, InvokeContext invokeContext, int timeoutMillis) throws SerializationException {
-        return this.getCommandFactory().createRequestCommand(request);
-
+    /** address parser to get custom args */
+    public RemotingAddressParser getAddressParser(){
+        return this.addressParser;
     }
 
-    public RemotingAddressParser getAddressParser() {
-        return addressParser;
+    /** connection manager */
+    public ConnectionManager getConnectionManager(){
+        return this.connectionManager;
     }
 
-    public ConnectionManager getConnectionManager() {
-        return connectionManager;
-    }
+
+
 }

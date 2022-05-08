@@ -54,7 +54,7 @@ import static org.springframework.cloud.commons.util.IdUtils.getDefaultInstanceI
 @ComponentScan
 @EnableEurekaClient
 @EnableFeignClients
-@EnableConfigurationProperties
+@EnableConfigurationProperties(RedisProxyConfiguration.class)
 //@ConditionalOnClass(EurekaClientConfig.class)
 //@ConditionalOnProperty(value = "eureka.client.enabled", matchIfMissing = true)
 //@AutoConfigureBefore({ NoopDiscoveryClientAutoConfiguration.class,

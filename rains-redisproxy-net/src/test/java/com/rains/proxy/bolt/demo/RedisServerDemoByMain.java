@@ -17,9 +17,10 @@
 package com.rains.proxy.bolt.demo;
 
 import com.alipay.remoting.ConnectionEventType;
+
 import com.rains.proxy.bolt.processor.CONNECTEventProcessor;
 import com.rains.proxy.bolt.processor.DISCONNECTEventProcessor;
-import com.rains.proxy.bolt.server.RedisBoltServer;
+import com.rains.proxy.bolt.server.BoltServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,17 +34,17 @@ public class RedisServerDemoByMain {
     static Logger             logger                    = LoggerFactory
                                                             .getLogger(RedisServerDemoByMain.class);
 
-    RedisBoltServer server;
+    BoltServer                server;
 
     int                       port                      = 8999;
 
-    //SimpleServerUserProcessor serverUserProcessor       = new SimpleServerUserProcessor();
+   // SimpleServerUserProcessor serverUserProcessor       = new SimpleServerUserProcessor();
     CONNECTEventProcessor serverConnectProcessor    = new CONNECTEventProcessor();
     DISCONNECTEventProcessor serverDisConnectProcessor = new DISCONNECTEventProcessor();
 
     public RedisServerDemoByMain() {
         // 1. create a Rpc server with port assigned
-        server = new RedisBoltServer(port);
+        server = new BoltServer(port);
         // 2. add processor for connect and close event if you need
         server.addConnectionEventProcessor(ConnectionEventType.CONNECT, serverConnectProcessor);
         server.addConnectionEventProcessor(ConnectionEventType.CLOSE, serverDisConnectProcessor);

@@ -61,26 +61,6 @@ public class GuavaConsistentHash<T> {
         return ketamaNodes.get(hash);
     }
 
-     public T getNodeByKey(byte[] key){
-        if(!init) {
-            throw new RuntimeException("init uncomplete...");
-        }
-        // 注意，这里是NIO包 java.nio.charset.Charset
-       // byte[] digest = hashFunction.hashString(key, Charset.forName("UTF-8")).asBytes();
-        long hash = hash(key,0);
-        //如果找到这个节点，直接取节点，返回
-        if(!ketamaNodes.containsKey(hash)){
-            //得到大于当前key的那个子Map，然后从中取出第一个key，就是大于且离它最近的那个key
-            SortedMap<Long,T> tailMap = ketamaNodes.tailMap(hash);
-            if(tailMap.isEmpty()){
-                hash = ketamaNodes.firstKey();
-            }else{
-                hash = tailMap.firstKey();
-            }
-
-        }
-        return ketamaNodes.get(hash);
-    }
 
 
     /**

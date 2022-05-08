@@ -37,13 +37,7 @@ public class RedisCommand implements IRedisCommand {
 
 	private int argCount;
 	private List<byte[]> args;
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.wanda.ffan.redis.proxy.core.command.IRedisCommand#encode(io.netty
-	 * .buffer.ByteBuf)
-	 */
+
 	@Override
 	public void encode(ByteBuf byteBuf) {
 		byteBuf.writeByte((byte) RedisConstants.ASTERISK_BYTE);
@@ -88,7 +82,7 @@ public class RedisCommand implements IRedisCommand {
 		this.args = args;
 	}
 
-	
+
 	private void writeCRLF(ByteBuf byteBuf) {
 		byteBuf.writeByte(RedisConstants.CR_BYTE);
 		byteBuf.writeByte(RedisConstants.LF_BYTE);
@@ -108,6 +102,14 @@ public class RedisCommand implements IRedisCommand {
 
 	public void setPolicy(RedisRequestPolicy policy) {
 		this.policy = policy;
+	}
+
+	public String getKey(){
+		if(getArgCount()>1){
+			return  new String(args.get(1));
+		}else {
+			return null;
+		}
 	}
 
 	@Override

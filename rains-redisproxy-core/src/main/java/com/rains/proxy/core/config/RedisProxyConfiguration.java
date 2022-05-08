@@ -52,4 +52,6 @@ public class RedisProxyConfiguration {
     public void setGroupNode(List<RedisProxyGroupNode> groupNode) {
         this.groupNode = groupNode;
     }
+
+
 }
