@@ -1,5 +1,6 @@
 package com.rains.proxy.core.command.handler;
 
+import com.rains.proxy.bolt.domain.ClusterDomain;
 import com.rains.proxy.core.bean.RedisServerMasterCluster;
 import com.rains.proxy.core.client.impl.AbstractPoolClient;
 import com.rains.proxy.core.command.IRedisCommandHander;
@@ -21,8 +22,6 @@ import java.util.Map;
  * TODO
  */
 public class ThrooughCmdHandler implements IRedisCommandHander<RedisCommand> {
-//    private RedisServerMasterCluster redisServerMasterCluster;
-//    private Map<String, AbstractPoolClient> redisServerBeanMap;
     private ServerCmdExecute serverCmdExecute;
 
     private KeyCmdExecute keyCmdExecute;
@@ -35,10 +34,10 @@ public class ThrooughCmdHandler implements IRedisCommandHander<RedisCommand> {
     public ThrooughCmdHandler() {
     }
 
-    public ThrooughCmdHandler(Map<String, AbstractPoolClient> redisServerBeanMap, RedisServerMasterCluster redisServerMasterCluster) {
-        serverCmdExecute = new ServerCmdExecute(redisServerBeanMap,redisServerMasterCluster);
-        keyCmdExecute =  new KeyCmdExecute(redisServerBeanMap,redisServerMasterCluster);
-        throoughCmdExecute = new ThrooughCmdExecute(redisServerBeanMap,redisServerMasterCluster);
+    public ThrooughCmdHandler(ClusterDomain redisCluster) {
+        serverCmdExecute = new ServerCmdExecute(redisCluster);
+        keyCmdExecute =  new KeyCmdExecute(redisCluster);
+        throoughCmdExecute = new ThrooughCmdExecute(redisCluster);
 
     }
 

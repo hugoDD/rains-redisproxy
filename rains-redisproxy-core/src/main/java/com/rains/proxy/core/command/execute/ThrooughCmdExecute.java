@@ -1,5 +1,9 @@
 package com.rains.proxy.core.command.execute;
 
+import com.alipay.remoting.exception.RemotingException;
+import com.rains.proxy.bolt.client.RedisBoltClient;
+import com.rains.proxy.bolt.client.RedisBoltClientFactory;
+import com.rains.proxy.bolt.domain.ClusterDomain;
 import com.rains.proxy.core.bean.RedisServerMasterCluster;
 import com.rains.proxy.core.bean.support.RedisServerBean;
 import com.rains.proxy.core.bean.support.RedisServerClusterBean;
@@ -13,6 +17,8 @@ import com.rains.proxy.core.enums.RedisCmdTypeEnums;
 import com.rains.proxy.core.reply.IRedisReply;
 import com.rains.proxy.core.reply.impl.EmptyRedisReply;
 import io.netty.channel.ChannelHandlerContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import java.util.List;
@@ -26,18 +32,17 @@ import java.util.concurrent.ConcurrentHashMap;
  * TODO
  */
 public  class ThrooughCmdExecute implements ICmdExecute {
-
-    protected RedisServerMasterCluster redisServerMasterCluster;
-    protected Map<String, AbstractPoolClient> redisServerBeanMap;
+    private Logger logger = LoggerFactory.getLogger(ThrooughCmdExecute.class);
     protected ChannelHandlerContext ctx;
+    protected ClusterDomain redisCluster;
+
 
     private EmptyRedisReply emptyRedisReply = new EmptyRedisReply();
 
     public static Map<RedisCmdTypeEnums, ThrooughCmdExecute> cmdExecute = new ConcurrentHashMap<>();
 
-    public ThrooughCmdExecute(Map<String, AbstractPoolClient> redisServerBeanMap, RedisServerMasterCluster redisServerMasterCluster) {
-        this.redisServerMasterCluster = redisServerMasterCluster;
-        this.redisServerBeanMap = redisServerBeanMap;
+    public ThrooughCmdExecute(ClusterDomain redisCluster) {
+       this.redisCluster = redisCluster;
     }
 
 
@@ -52,72 +57,40 @@ public  class ThrooughCmdExecute implements ICmdExecute {
             return emptyRedisReply;
         }
 
-        RedisRequestPolicy policy = request.getPolicy();
+        String redisHost = redisCluster.select(request);
+        try {
+            Object msg = RedisBoltClientFactory.getClient().invokeSync(redisHost, request, 10000);
+            // Always write from the event loop, minimize the wakeup events
+            ctx.channel().eventLoop().execute(() -> {
+                // Not interested in the channel promise
+                ctx.writeAndFlush(msg, ctx.channel().voidPromise());
+            });
+        } catch (RemotingException e) {
+            logger.error("RemotingException write request Error :" , e);
+        } catch (InterruptedException e) {
+            logger.error("InterruptedException write request Error :" , e);
+        }
+       /* RedisRequestPolicy policy = request.getPolicy();
         if (policy.isRead()) {//从
             AbstractPoolClient ffanRedisClient = getShardClusterFfanRedisClient(request, cmd, false);//权重算法
             ffanRedisClient.write(request, ctx);
         } else {//主
             AbstractPoolClient ffanRedisClient = getShardFfanRedisClient(request, cmd);//默认一致性hash算法
             ffanRedisClient.write(request, ctx);
-        }
+        }*/
 
-        return emptyRedisReply;
+      return emptyRedisReply;
     }
 
     protected boolean doExecute(String cmd, RedisCommand redisCommand) {
+
         return false;
     }
 
 
 
 
-    /**
-     * 一致性hash算法 主
-     * @param request
-     * @return
-     */
-    private AbstractPoolClient getShardFfanRedisClient(RedisCommand request,String command){
-        RedisQuestBean redisQuestBean=new RedisQuestBean(new String(request.getArgs().get(0)), request.getArgs().get(1), true);
-        String  key=null;
-        if(redisServerMasterCluster.getMasters().size()==1){
-            key=redisServerMasterCluster.getMasters().get(0).getKey();
-        }else{
-            LoadBalance loadMasterBalance=redisServerMasterCluster.getLoadMasterBalance();
-            RedisServerBean ffanRedisServerBean=loadMasterBalance.select(redisQuestBean, null);
-            key=ffanRedisServerBean.getKey();
-        }
 
-        return redisServerBeanMap.get(key);
-    }
-
-    /**
-     * 读写分离， 从采用权重算法
-     * @param request
-     * @param command
-     * @return
-     */
-    private AbstractPoolClient getShardClusterFfanRedisClient(RedisCommand request,String command,boolean flag){
-        RedisQuestBean redisQuestBean=new RedisQuestBean(new String(request.getArgs().get(0)), request.getArgs().get(1),true );
-        LoadBalance loadMasterBalance=redisServerMasterCluster.getLoadMasterBalance();
-        RedisServerBean ffanRedisServerBean=loadMasterBalance.select(redisQuestBean, null);
-        List<RedisServerBean> ffanRedisServerBeans=redisServerMasterCluster.getMasterFfanRedisServerBean(ffanRedisServerBean.getKey());
-        if(ffanRedisServerBeans!=null&&ffanRedisServerBeans.size()>0){
-            RedisServerClusterBean redisServerClusterBean= redisServerMasterCluster.getRedisServerClusterBean(ffanRedisServerBean.getKey());
-            if(redisServerClusterBean!=null){
-                LoadBalance loadClusterBalance=redisServerClusterBean.getLoadClusterBalance();
-                loadClusterBalance.setFfanRedisServerMasterCluster(redisServerMasterCluster);
-                redisQuestBean.setWrite(flag);
-                RedisServerBean ffanClusterRedisServerBean=loadClusterBalance.select(redisQuestBean, ffanRedisServerBean);
-                if(ffanClusterRedisServerBean!=null){
-                    String key=ffanClusterRedisServerBean.getKey();
-                    return redisServerBeanMap.get(key);
-                }
-            }
-        }
-        String key=ffanRedisServerBean.getKey();
-        return redisServerBeanMap.get(key);
-
-    }
 
     public void setCtx(ChannelHandlerContext ctx){
         this.ctx = ctx;

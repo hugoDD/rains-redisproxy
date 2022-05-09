@@ -1,5 +1,6 @@
 package com.rains.proxy.core.command.execute;
 
+import com.rains.proxy.bolt.domain.ClusterDomain;
 import com.rains.proxy.core.bean.RedisServerMasterCluster;
 import com.rains.proxy.core.client.impl.AbstractPoolClient;
 import com.rains.proxy.core.command.ICmdExecute;
@@ -7,6 +8,7 @@ import com.rains.proxy.core.command.impl.RedisCommand;
 import com.rains.proxy.core.enums.RedisCmdTypeEnums;
 import com.rains.proxy.core.reply.impl.ErrorRedisReply;
 import com.rains.proxy.core.utils.ProtoUtils;
+import com.rains.proxy.core.utils.StringUtils;
 
 import java.util.Map;
 
@@ -18,18 +20,18 @@ import java.util.Map;
  */
 public class ServerCmdExecute extends ThrooughCmdExecute implements ICmdExecute {
 
-    public ServerCmdExecute(Map<String, AbstractPoolClient> redisServerBeanMap, RedisServerMasterCluster redisServerMasterCluster) {
-        super(redisServerBeanMap, redisServerMasterCluster);
+
+
+    public ServerCmdExecute(ClusterDomain redisCluster) {
+        super(redisCluster);
         cmdExecute.put(RedisCmdTypeEnums.Server, this);
-
     }
-
 
     @Override
     protected boolean doExecute(String cmd, RedisCommand redisCommand) {
         switch (cmd) {
             case "INFO":
-                return handler(cmd, redisCommand);
+//                return handler(cmd, redisCommand);
             case "COMMAND":
                 return handler(cmd, redisCommand);
 
@@ -38,14 +40,13 @@ public class ServerCmdExecute extends ThrooughCmdExecute implements ICmdExecute 
     }
 
     private boolean handler(String cmd, RedisCommand redisCommand) {
-        if (redisServerMasterCluster != null && redisServerMasterCluster.getMasters() != null) {
-            String key = redisServerMasterCluster.getMasters().get(0).getKey();
-            AbstractPoolClient ffanRedisClient = redisServerBeanMap.get(key);
-            ffanRedisClient.write(redisCommand, ctx);
-        } else {
+        String host = redisCluster.select(redisCommand);
+        if(StringUtils.isEmpty(host)){
             ctx.channel().writeAndFlush(new ErrorRedisReply(ProtoUtils.buildErrorReplyBytes("not support command:" + cmd)));
+            return true;
         }
-        return true;
+
+        return false;
     }
 
 

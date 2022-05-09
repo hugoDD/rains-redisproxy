@@ -76,6 +76,15 @@
       <artifactId>jmh-generator-annprocess</artifactId>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>com.alipay.sofa</groupId>
+      <artifactId>bolt</artifactId>
+      <version>1.6.4</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-yaml</artifactId>
+    </dependency>
 
   </dependencies>
 </project>

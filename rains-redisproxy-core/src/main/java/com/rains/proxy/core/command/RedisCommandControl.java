@@ -1,5 +1,6 @@
 package com.rains.proxy.core.command;
 
+import com.rains.proxy.bolt.domain.ClusterDomain;
 import com.rains.proxy.core.bean.RedisServerMasterCluster;
 import com.rains.proxy.core.client.impl.AbstractPoolClient;
 import com.rains.proxy.core.command.handler.NoThrooughCmdHandler;
@@ -33,9 +34,9 @@ public class RedisCommandControl {
 
     }
 
-    public RedisCommandControl(Map<String, AbstractPoolClient> redisServerBeanMap,RedisServerMasterCluster redisServerMasterCluster) {
+    public RedisCommandControl(ClusterDomain redisCluster) {
         noThrooughCmdHandler = new NoThrooughCmdHandler();
-        throoughCmdHandler = new ThrooughCmdHandler(redisServerBeanMap,redisServerMasterCluster);
+        throoughCmdHandler = new ThrooughCmdHandler(redisCluster);
 
     }
     public IRedisReply action(RedisCommand command){

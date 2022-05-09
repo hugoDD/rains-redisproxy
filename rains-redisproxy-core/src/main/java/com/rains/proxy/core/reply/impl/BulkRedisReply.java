@@ -52,6 +52,8 @@ public class BulkRedisReply extends CommonRedisReply {
 
     private int length=-1;
 
+    private int remain=-1;
+
     public BulkRedisReply(byte[] value) {
         this();
         this.value = value;
@@ -63,15 +65,19 @@ public class BulkRedisReply extends CommonRedisReply {
 
     public void setLength(int length) {
         this.length = length;
+        this.remain = length;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.wanda.ffan.redis.proxy.core.reply.impl.AbstractRedisReply#doEncode
-     * (io.netty.buffer.ByteBuf)
-     */
+    public int getRemain() {
+        return remain;
+    }
+
+    public void setRemain(int readable) {
+       if( readable<remain){
+           remain = remain-readable;
+       }
+    }
+
     @Override
     public void doEncode(ByteBuf out) {
         out.writeBytes(ProtoUtils.convertIntToByteArray(length));

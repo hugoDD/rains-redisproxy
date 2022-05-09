@@ -2,9 +2,10 @@ package com.rains.proxy.core.command.impl;
 
 
 public class RedisRequestPolicy {
-
-	private byte categroy;				// 类别 
-	private byte handleType;			// 处理类型
+	/**类别 */
+	private byte categroy;
+	/**处理类型*/
+	private byte handleType;
 	
 	private byte rw = -1;
 	

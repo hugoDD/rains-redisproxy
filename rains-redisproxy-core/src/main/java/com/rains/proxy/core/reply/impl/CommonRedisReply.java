@@ -28,7 +28,7 @@ public abstract class CommonRedisReply extends AbstractRedisReply {
 	public String toString() {
 		return getClass().getName()+"{" +
 				"type=" + getType() +
-				",value=" + new String(value) +
+				",value=" +(value==null?null: new String(value)) +
 				'}';
 	}
 }

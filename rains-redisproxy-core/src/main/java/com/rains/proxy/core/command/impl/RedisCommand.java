@@ -96,6 +96,7 @@ public class RedisCommand implements IRedisCommand {
 		this.inline = inline;
 	}
 
+	@Override
 	public RedisRequestPolicy getPolicy() {
 		return policy;
 	}
@@ -104,6 +105,7 @@ public class RedisCommand implements IRedisCommand {
 		this.policy = policy;
 	}
 
+	@Override
 	public String getKey(){
 		if(getArgCount()>1){
 			return  new String(args.get(1));

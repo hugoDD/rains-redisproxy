@@ -1,22 +1,17 @@
+name: proxy
 nodes:
-  - redisMasters:
-      - host: 172.26.223.109
-        port: 16379
-        redisSlaves:
-          - host: 172.26.223.109
-            port: 26379
-  - redisMasters:
-      - host: 172.26.223.109
-        port: 16379
-        redisSlaves:
-          - host: 172.26.223.109
-            port: 26379
-          - host: 172.26.223.109
-            port: 6379
-#       -  host: 172.26.223.108
-#          port: 16379
-#          redisSlaves:
-#            - host: 172.26.223.110
-#              port: 26379
-#            - host: 172.26.223.111
-#              port: 36379
+  redisMasters:
+    - host: 172.26.223.109
+      port: 16379
+      redisSlaves:
+        - host: 172.26.223.109
+          port: 26379
+#        - host: 172.26.223.109
+#          port: 36379
+#    - host: 172.26.223.109
+#      port: 6380
+#      redisSlaves:
+#        - host: 172.26.223.109
+#          port: 26380
+#        - host: 172.26.223.109
+#          port: 26380

@@ -14,33 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rains.proxy.net.server.support;
+package com.rains.proxy.bolt.protocol;
 
 
-import com.rains.proxy.core.bean.RedisServerMasterCluster;
-import com.rains.proxy.core.bean.support.RedisServerBean;
-import com.rains.proxy.core.bean.support.RedisServerClusterBean;
-import com.rains.proxy.core.client.impl.AbstractPoolClient;
-import com.rains.proxy.core.cluster.LoadBalance;
-import com.rains.proxy.core.cluster.impl.support.RedisQuestBean;
+import com.rains.proxy.bolt.domain.ClusterDomain;
 import com.rains.proxy.core.command.RedisCommandControl;
 import com.rains.proxy.core.command.impl.RedisCommand;
-import com.rains.proxy.core.enums.RedisCommandEnums;
 import com.rains.proxy.core.enums.Type;
 import com.rains.proxy.core.reply.IRedisReply;
 import com.rains.proxy.core.reply.impl.ErrorRedisReply;
-import com.rains.proxy.core.reply.impl.StatusRedisReply;
 import com.rains.proxy.core.utils.ProtoUtils;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -54,17 +44,16 @@ public class RedisServerHandler extends SimpleChannelInboundHandler<RedisCommand
     private Logger logger = LoggerFactory.getLogger(RedisServerHandler.class);
 
 
-    private Map<String, AbstractPoolClient> redisServerBeanMap;
 
-    private RedisServerMasterCluster redisServerMasterCluster;
+
+    private ClusterDomain clusterDomain;
 
     private RedisCommandControl redisCommandControl;
 
 
-    public RedisServerHandler(Map<String, AbstractPoolClient> redisServerBeanMap, RedisServerMasterCluster redisServerMasterCluster) {
-        this.redisServerMasterCluster = redisServerMasterCluster;
-        this.redisServerBeanMap = redisServerBeanMap;
-        //redisCommandControl = new RedisCommandControl(redisServerBeanMap, redisServerMasterCluster);
+    public RedisServerHandler() {
+        this.clusterDomain = new ClusterDomain();
+        redisCommandControl = new RedisCommandControl(clusterDomain);
     }
 
     @Override
