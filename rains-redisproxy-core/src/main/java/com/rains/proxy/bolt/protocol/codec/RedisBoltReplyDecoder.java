@@ -22,6 +22,7 @@ import com.alipay.remoting.ResponseStatus;
 import com.rains.proxy.bolt.remoting.RedisRequestCommand;
 import com.rains.proxy.bolt.remoting.RedisResponseCommand;
 import com.rains.proxy.core.constants.RedisConstants;
+import com.rains.proxy.core.enums.ReplyState;
 import com.rains.proxy.core.enums.Type;
 import com.rains.proxy.core.reply.IRedisReply;
 import com.rains.proxy.core.reply.impl.*;
@@ -39,75 +40,88 @@ import java.util.List;
  * @version V1.0
  * 创建日期 2018/6/1
  */
-public class RedisBoltReplyDecoder implements CommandDecoder  {
+public class RedisBoltReplyDecoder implements CommandDecoder {
     private static final Logger logger = LoggerFactory.getLogger(RedisBoltReplyDecoder.class);
-
+    private ReplyState state;
+    private int remain = -1;
 
     public RedisBoltReplyDecoder() {
-
+        state = ReplyState.READ_INIT;
     }
 
+    protected void checkpoint(ReplyState state) {
+        this.state = state;
+    }
+
+    IRedisReply redisReply = null;
 
     @Override
     public void decode(ChannelHandlerContext ctx, ByteBuf in,
                        List<Object> out) throws Exception {
 
-        IRedisReply redisReply = null;
-//		switch (state()) {
-//	      case READ_INIT:
 
-        char ch = (char) in.readByte();
-        if (ch == RedisConstants.ASTERISK_BYTE) {
-            redisReply = new MultyBulkRedisReply();
-        } else if (ch == RedisConstants.DOLLAR_BYTE) {
-            redisReply = new BulkRedisReply();
-        } else if (ch == RedisConstants.COLON_BYTE) {
-            redisReply = new IntegerRedisReply();
-        } else if (ch == RedisConstants.OK_BYTE) {
-            redisReply = new StatusRedisReply();
-        } else if (ch == RedisConstants.ERROR_BYTE) {
-            redisReply = new ErrorRedisReply();
-        }
-//	        checkpoint(ReplyState.READ_REPLY);
-//	      case READ_REPLY:
-        if (redisReply == null) {
-            //checkpoint(ReplyState.READ_INIT);
-            return;
-        }
-        Type type = redisReply.getType();
-        if (type == Type.INTEGER) {
-            byte[] value = readLine(in).getBytes(RedisConstants.DEFAULT_CHARACTER);
-            ((IntegerRedisReply) redisReply).setValue(value);
-        } else if (type == Type.STATUS) {
-            byte[] value = readLine(in).getBytes(RedisConstants.DEFAULT_CHARACTER);
-            ((StatusRedisReply) redisReply).setValue(value);
-        } else if (type == Type.ERROR) {
-            byte[] value = readLine(in).getBytes(RedisConstants.DEFAULT_CHARACTER);
-            ((ErrorRedisReply) redisReply).setValue(value);
-        } else if (type == Type.BULK) {
-            readBulkReply(in, (BulkRedisReply) redisReply);
-        } else if (type == Type.MULTYBULK) {
-            readArrayReply(in, (MultyBulkRedisReply) redisReply);
-        }
-        RedisResponseCommand responseCommand = new RedisResponseCommand(redisReply);
-        responseCommand.setId(RedisRequestCommand.pollRequestId());
-        responseCommand.setResponseStatus(ResponseStatus.SUCCESS);
-        out.add(responseCommand);
-        redisReply = null;
-        //checkpoint(ReplyState.READ_INIT);
-        if (logger.isDebugEnabled()) {
-            logger.debug("reply解码前协议文本内容:{}", in.slice(0, in.readerIndex()).toString(CharsetUtil.UTF_8).replaceAll("\r\n", "\\\\r\\\\n"));
-        }
+        switch (state) {
+            case READ_INIT:
 
-        return;
-//	      default:
-//	        throw new Error("can't reach there!");
+                char ch = (char) in.readByte();
+                if (ch == RedisConstants.ASTERISK_BYTE) {
+                    redisReply = new MultyBulkRedisReply();
+                } else if (ch == RedisConstants.DOLLAR_BYTE) {
+                    redisReply = new BulkRedisReply();
+                } else if (ch == RedisConstants.COLON_BYTE) {
+                    redisReply = new IntegerRedisReply();
+                } else if (ch == RedisConstants.OK_BYTE) {
+                    redisReply = new StatusRedisReply();
+                } else if (ch == RedisConstants.ERROR_BYTE) {
+                    redisReply = new ErrorRedisReply();
+                }
+                checkpoint(ReplyState.READ_REPLY);
+            case READ_REPLY:
+                if (redisReply == null) {
+                    //checkpoint(ReplyState.READ_INIT);
+                    return;
+                }
+                Type type = redisReply.getType();
+                if (type == Type.INTEGER) {
+                    byte[] value = readLine(in).getBytes(RedisConstants.DEFAULT_CHARACTER);
+                    ((IntegerRedisReply) redisReply).setValue(value);
+                } else if (type == Type.STATUS) {
+                    byte[] value = readLine(in).getBytes(RedisConstants.DEFAULT_CHARACTER);
+                    ((StatusRedisReply) redisReply).setValue(value);
+                } else if (type == Type.ERROR) {
+                    byte[] value = readLine(in).getBytes(RedisConstants.DEFAULT_CHARACTER);
+                    ((ErrorRedisReply) redisReply).setValue(value);
+                } else if (type == Type.BULK) {
+                    boolean readSuccess=readBulkReply(in, (BulkRedisReply) redisReply);
+                    if(!readSuccess){
+                        checkpoint(ReplyState.READ_REPLY);
+                        return;
+                    }
+                } else if (type == Type.MULTYBULK) {
+                    readArrayReply(in, (MultyBulkRedisReply) redisReply);
+                }
+
+                checkpoint(ReplyState.READ_INIT);
+                RedisResponseCommand responseCommand = new RedisResponseCommand(redisReply);
+                responseCommand.setId(RedisRequestCommand.pollRequestId());
+                responseCommand.setResponseStatus(ResponseStatus.SUCCESS);
+                out.add(responseCommand);
+                redisReply = null;
+                if (logger.isDebugEnabled()) {
+                    logger.debug("reply解码前协议文本内容:{}", in.slice(0, in.readerIndex()).toString(CharsetUtil.UTF_8).replaceAll("\r\n", "\\\\r\\\\n"));
+                }
+
+                return;
+            default:
+                throw new Error("can't reach there!");
+        }
     }
 
 
     private void readArrayReply(ByteBuf buffer, MultyBulkRedisReply multyBulkRedisReply) throws UnsupportedEncodingException {
         int count = readInt(buffer);
-        if (multyBulkRedisReply != null && multyBulkRedisReply.getCount() == count) {//已经有值，防止多次,netty在读取85次会多次解析
+        //已经有值，防止多次,netty在读取85次会多次解析
+        if (multyBulkRedisReply != null && multyBulkRedisReply.getCount() == count) {
             multyBulkRedisReply.getList().clear();
         }
         multyBulkRedisReply.setCount(count);
@@ -130,25 +144,43 @@ public class RedisBoltReplyDecoder implements CommandDecoder  {
 
     }
 
-    private void readBulkReply(ByteBuf buffer, BulkRedisReply bulkReply) {
+    byte[] value = null;
 
-        int length = readInt(buffer);
-        int readerIndex =buffer.readableBytes();
-        bulkReply.setLength(length);
-        bulkReply.setRemain(readerIndex);
-        if (length == -1) {//read null
+    private boolean readBulkReply(ByteBuf buffer, BulkRedisReply bulkReply) {
+        int length =-2;
+        if (remain == -1) {
+            length = readInt(buffer);
+            remain = length;
+            bulkReply.setLength(length);
+            value = new byte[length];
+        }
 
-        } else if (length == 0) {//read ""
+
+        int readerIndex = buffer.readableBytes();
+
+
+        //read "" or null
+        if (length == -1 || length == 0) {
             buffer.skipBytes(2);
         } else {
-            byte[] value = new byte[readerIndex<length?readerIndex:length];
+            if(readerIndex>remain){
+                buffer.readBytes(value,bulkReply.getReadable(),remain);
+                bulkReply.setValue(value);
+                buffer.skipBytes(2);
+                remain=-1;
+            }else {
+                int startIndex = bulkReply.getReadable();
+                int readLen = readerIndex;
+                buffer.readBytes(value, startIndex, readLen);
+                remain =remain -readLen;
+                bulkReply.setReadable(readLen);
+               // bulkReply.setValue(value);
+                return false;
+            }
 
-            buffer.readBytes(value);
-
-            bulkReply.setValue(value);
-
-            buffer.skipBytes(2);
         }
+
+        return true;
     }
 
     private int readInt(ByteBuf buffer) {

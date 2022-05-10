@@ -18,6 +18,8 @@ package com.rains.proxy.bolt.demo;
 
 import com.alipay.remoting.ConnectionEventType;
 
+import com.alipay.remoting.config.ConfigManager;
+import com.alipay.remoting.config.Configs;
 import com.rains.proxy.bolt.processor.CONNECTEventProcessor;
 import com.rains.proxy.bolt.processor.DISCONNECTEventProcessor;
 import com.rains.proxy.bolt.server.BoltServer;
@@ -44,6 +46,7 @@ public class RedisServerDemoByMain {
 
     public RedisServerDemoByMain() {
         // 1. create a Rpc server with port assigned
+        System.setProperty(Configs.TCP_IDLE_SWITCH, "false");
         server = new BoltServer(port);
         // 2. add processor for connect and close event if you need
         server.addConnectionEventProcessor(ConnectionEventType.CONNECT, serverConnectProcessor);

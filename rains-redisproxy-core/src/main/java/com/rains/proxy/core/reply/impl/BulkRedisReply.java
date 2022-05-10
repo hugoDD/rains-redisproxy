@@ -52,7 +52,7 @@ public class BulkRedisReply extends CommonRedisReply {
 
     private int length=-1;
 
-    private int remain=-1;
+    private int readable=0;
 
     public BulkRedisReply(byte[] value) {
         this();
@@ -65,17 +65,15 @@ public class BulkRedisReply extends CommonRedisReply {
 
     public void setLength(int length) {
         this.length = length;
-        this.remain = length;
+
     }
 
-    public int getRemain() {
-        return remain;
+    public int getReadable() {
+        return readable;
     }
 
-    public void setRemain(int readable) {
-       if( readable<remain){
-           remain = remain-readable;
-       }
+    public void setReadable(int readable) {
+      this.readable = this.readable+readable;
     }
 
     @Override

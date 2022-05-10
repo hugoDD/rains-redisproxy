@@ -59,10 +59,16 @@ public  class ThrooughCmdExecute implements ICmdExecute {
 
         String redisHost = redisCluster.select(request);
         try {
-            Object msg = RedisBoltClientFactory.getClient().invokeSync(redisHost, request, 10000);
+            Object msg = RedisBoltClientFactory.getClient()
+                    .invokeSync(redisHost, request, 10000);
+            if(msg==null){
+                logger.debug("msg is null :{}",msg);
+                return emptyRedisReply;
+            }
             // Always write from the event loop, minimize the wakeup events
             ctx.channel().eventLoop().execute(() -> {
                 // Not interested in the channel promise
+                logger.debug("msg is {}",msg);
                 ctx.writeAndFlush(msg, ctx.channel().voidPromise());
             });
         } catch (RemotingException e) {
