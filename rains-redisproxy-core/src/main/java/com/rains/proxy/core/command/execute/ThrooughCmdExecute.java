@@ -1,5 +1,6 @@
 package com.rains.proxy.core.command.execute;
 
+import com.alipay.remoting.InvokeCallback;
 import com.alipay.remoting.exception.RemotingException;
 import com.rains.proxy.bolt.client.RedisBoltClient;
 import com.rains.proxy.bolt.client.RedisBoltClientFactory;
@@ -24,6 +25,8 @@ import org.springframework.util.Assert;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 /**
  * @author dourx
@@ -59,18 +62,38 @@ public  class ThrooughCmdExecute implements ICmdExecute {
 
         String redisHost = redisCluster.select(request);
         try {
-            Object msg = RedisBoltClientFactory.getClient()
-                    .invokeSync(redisHost, request, 10000);
-            if(msg==null){
-                logger.debug("msg is null :{}",msg);
-                return emptyRedisReply;
-            }
+            RedisBoltClientFactory.getClient().invokeWithCallback(redisHost,request, new InvokeCallback() {
+                Executor executor = Executors.newCachedThreadPool();
+                        @Override
+                        public void onResponse(Object result) {
+                            ctx.channel().eventLoop().execute(() -> {
+                                // Not interested in the channel promise
+                                logger.debug("msg is {}",result);
+                                ctx.writeAndFlush(result, ctx.channel().voidPromise());
+                            });
+                        }
+
+                        @Override
+                        public void onException(Throwable e) {
+                            logger.debug("msg is null :{}",e);
+                        }
+
+                        @Override
+                        public Executor getExecutor() {
+                            return executor;
+                        }
+                    },10000);
+//                    .invokeSync(redisHost, request, 10000);
+//            if(msg==null){
+//                logger.debug("msg is null :{}",msg);
+//                return emptyRedisReply;
+//            }
             // Always write from the event loop, minimize the wakeup events
-            ctx.channel().eventLoop().execute(() -> {
-                // Not interested in the channel promise
-                logger.debug("msg is {}",msg);
-                ctx.writeAndFlush(msg, ctx.channel().voidPromise());
-            });
+//            ctx.channel().eventLoop().execute(() -> {
+//                // Not interested in the channel promise
+//                logger.debug("msg is {}",msg);
+//                ctx.writeAndFlush(msg, ctx.channel().voidPromise());
+//            });
         } catch (RemotingException e) {
             logger.error("RemotingException write request Error :" , e);
         } catch (InterruptedException e) {

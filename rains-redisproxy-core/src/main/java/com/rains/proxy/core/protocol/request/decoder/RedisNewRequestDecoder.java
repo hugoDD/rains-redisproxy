@@ -32,7 +32,7 @@ public class RedisNewRequestDecoder implements  IRedisRequestDecoder {
                     int length = ProtoUtils.readInt(buffer);
                     byte[] argByte = new byte[length];
                     buffer.readBytes(argByte);
-                    buffer.skipBytes(2);//skip \r\n
+                    buffer.skipBytes(2);
                     //LoggerUtils.info("String:"+new String(argByte));
                     args.add(argByte);
                 } else {

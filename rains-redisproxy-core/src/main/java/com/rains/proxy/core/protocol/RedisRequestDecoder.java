@@ -49,7 +49,8 @@ public  class RedisRequestDecoder extends ReplayingDecoder<RequestState> {
             case READ_INIT: {
                 requestCommand = new RedisCommand();
                 char ch = (char) buffer.readByte();
-                if (ch == RedisConstants.ASTERISK_BYTE) {//redis 新协议开头
+                //redis 新协议开头
+                if (ch == RedisConstants.ASTERISK_BYTE) {
                     requestCommand.setInline(false);
                     //读取参数数量(新协议)
                     checkpoint(RequestState.READ_ARG_COUNT);

@@ -16,6 +16,7 @@
  */
 package com.rains.proxy.core.reply.impl;
 
+import com.rains.proxy.bolt.protocol.codec.ReplyFactory;
 import com.rains.proxy.core.constants.RedisConstants;
 import com.rains.proxy.core.enums.Type;
 import com.rains.proxy.core.reply.IRedisReply;
@@ -26,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -169,4 +171,47 @@ public class MultyBulkRedisReply extends CommonRedisReply implements Serializabl
 	public void addReply(IRedisReply reply) {
 		list.add(reply);
 	}
+
+	@Override
+	public boolean handler(ByteBuf in) {
+		try {
+			readArrayReply(in,this);
+		} catch (UnsupportedEncodingException e) {
+			logger.error(e.getMessage(),e);
+			return false;
+		}
+		return true;
+	}
+	private void readArrayReply(ByteBuf buffer, MultyBulkRedisReply multyBulkRedisReply) throws UnsupportedEncodingException {
+		int count = readInt(buffer);
+		//已经有值，防止多次,netty在读取85次会多次解析
+		if (multyBulkRedisReply != null && multyBulkRedisReply.getCount() == count) {
+			multyBulkRedisReply.getList().clear();
+		}
+		multyBulkRedisReply.setCount(count);
+		for (int i = 0; i < count; i++) {
+			char type = (char) buffer.readByte();
+			IRedisReply iRedisReply = ReplyFactory.buildReply(type);
+			boolean done = iRedisReply.handler(buffer);
+			if(done){
+				multyBulkRedisReply.addReply(iRedisReply);
+			}
+			/*if (type == RedisConstants.COLON_BYTE) {
+				IntegerRedisReply reply = new IntegerRedisReply();
+				reply.setValue(readLine(buffer).getBytes(RedisConstants.DEFAULT_CHARACTER));
+				multyBulkRedisReply.addReply(reply);
+			} else if (type == RedisConstants.DOLLAR_BYTE) {
+				BulkRedisReply bulkReply = new BulkRedisReply();
+				bulkReply.handler(buffer);
+//				readBulkReply(buffer, bulkReply);
+				multyBulkRedisReply.addReply(bulkReply);
+			} else if (type == RedisConstants.ASTERISK_BYTE) {
+				MultyBulkRedisReply mbRedisReply = new MultyBulkRedisReply();
+				readArrayReply(buffer, mbRedisReply);
+				multyBulkRedisReply.addReply(mbRedisReply);
+			}*/
+		}
+
+	}
+
 }

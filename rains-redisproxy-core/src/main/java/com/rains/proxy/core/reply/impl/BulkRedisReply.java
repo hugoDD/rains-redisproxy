@@ -86,4 +86,46 @@ public class BulkRedisReply extends CommonRedisReply {
         }
     }
 
+    @Override
+    public boolean handler(ByteBuf in) {
+        return readBulkReply(in);
+    }
+    int remain=-1;
+    private boolean readBulkReply(ByteBuf buffer) {
+        int len =-2;
+        if (remain == -1) {
+            len = readInt(buffer);
+            remain = len;
+            setLength(len);
+            value = new byte[len];
+        }
+
+
+        int readerIndex = buffer.readableBytes();
+
+
+        //read "" or null
+        if (len == -1 || len == 0) {
+            buffer.skipBytes(2);
+        } else {
+            if(readerIndex>remain){
+                buffer.readBytes(value,getReadable(),remain);
+                setValue(value);
+                buffer.skipBytes(2);
+                remain=-1;
+            }else {
+                int startIndex = getReadable();
+                int readLen = readerIndex;
+                buffer.readBytes(value, startIndex, readLen);
+                remain =remain -readLen;
+                setReadable(readLen);
+                return false;
+            }
+
+        }
+
+        return true;
+    }
+
+
 }

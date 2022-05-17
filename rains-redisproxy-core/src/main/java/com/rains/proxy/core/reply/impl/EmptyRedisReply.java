@@ -19,4 +19,9 @@ public class EmptyRedisReply extends  AbstractRedisReply {
     public void doEncode(ByteBuf out) {
         throw new RedisCodecException("empty redis reply doencode is error");
     }
+
+    @Override
+    public boolean handler(ByteBuf in) {
+        return true;
+    }
 }

@@ -1,5 +1,6 @@
 package com.rains.proxy.core.reply;
 
+import com.rains.proxy.core.constants.RedisConstants;
 import com.rains.proxy.core.enums.Type;
 import io.netty.buffer.ByteBuf;
 
@@ -38,6 +39,8 @@ public interface IRedisReply {
 	   * @param out
 	   */
 	  void encode(ByteBuf out);
+
+	  boolean handler(ByteBuf  in);
 
 
 }

@@ -49,7 +49,7 @@ public class RedisBoltReplyDecoder implements CommandDecoder {
         state = ReplyState.READ_INIT;
     }
 
-    protected void checkpoint(ReplyState state) {
+    protected void state(ReplyState state) {
         this.state = state;
     }
 
@@ -64,7 +64,8 @@ public class RedisBoltReplyDecoder implements CommandDecoder {
             case READ_INIT:
 
                 char ch = (char) in.readByte();
-                if (ch == RedisConstants.ASTERISK_BYTE) {
+                redisReply = ReplyFactory.buildReply(ch);
+               /* if (ch == RedisConstants.ASTERISK_BYTE) {
                     redisReply = new MultyBulkRedisReply();
                 } else if (ch == RedisConstants.DOLLAR_BYTE) {
                     redisReply = new BulkRedisReply();
@@ -74,14 +75,19 @@ public class RedisBoltReplyDecoder implements CommandDecoder {
                     redisReply = new StatusRedisReply();
                 } else if (ch == RedisConstants.ERROR_BYTE) {
                     redisReply = new ErrorRedisReply();
-                }
-                checkpoint(ReplyState.READ_REPLY);
+                }*/
+                state(ReplyState.READ_REPLY);
             case READ_REPLY:
                 if (redisReply == null) {
                     //checkpoint(ReplyState.READ_INIT);
                     return;
                 }
-                Type type = redisReply.getType();
+                boolean readSuccess= redisReply.handler(in);
+                if(!readSuccess){
+                    //state(ReplyState.READ_REPLY);
+                    return;
+                }
+            /*    Type type = redisReply.getType();
                 if (type == Type.INTEGER) {
                     byte[] value = readLine(in).getBytes(RedisConstants.DEFAULT_CHARACTER);
                     ((IntegerRedisReply) redisReply).setValue(value);
@@ -94,14 +100,14 @@ public class RedisBoltReplyDecoder implements CommandDecoder {
                 } else if (type == Type.BULK) {
                     boolean readSuccess=readBulkReply(in, (BulkRedisReply) redisReply);
                     if(!readSuccess){
-                        checkpoint(ReplyState.READ_REPLY);
+                        state(ReplyState.READ_REPLY);
                         return;
                     }
                 } else if (type == Type.MULTYBULK) {
                     readArrayReply(in, (MultyBulkRedisReply) redisReply);
-                }
+                }*/
 
-                checkpoint(ReplyState.READ_INIT);
+                state(ReplyState.READ_INIT);
                 RedisResponseCommand responseCommand = new RedisResponseCommand(redisReply);
                 responseCommand.setId(RedisRequestCommand.pollRequestId());
                 responseCommand.setResponseStatus(ResponseStatus.SUCCESS);
@@ -118,7 +124,7 @@ public class RedisBoltReplyDecoder implements CommandDecoder {
     }
 
 
-    private void readArrayReply(ByteBuf buffer, MultyBulkRedisReply multyBulkRedisReply) throws UnsupportedEncodingException {
+  /*  private void readArrayReply(ByteBuf buffer, MultyBulkRedisReply multyBulkRedisReply) throws UnsupportedEncodingException {
         int count = readInt(buffer);
         //已经有值，防止多次,netty在读取85次会多次解析
         if (multyBulkRedisReply != null && multyBulkRedisReply.getCount() == count) {
@@ -144,57 +150,48 @@ public class RedisBoltReplyDecoder implements CommandDecoder {
 
     }
 
-    byte[] value = null;
+    byte[] value = null;*/
 
-    private boolean readBulkReply(ByteBuf buffer, BulkRedisReply bulkReply) {
-        int length =-2;
-        if (remain == -1) {
-            length = readInt(buffer);
-            remain = length;
-            bulkReply.setLength(length);
-            value = new byte[length];
-        }
+//    private boolean readBulkReply(ByteBuf buffer, BulkRedisReply bulkReply) {
+//        int length =-2;
+//        if (remain == -1) {
+//            length = readInt(buffer);
+//            remain = length;
+//            bulkReply.setLength(length);
+//            value = new byte[length];
+//        }
+//
+//
+//        int readerIndex = buffer.readableBytes();
+//
+//
+//        //read "" or null
+//        if (length == -1 || length == 0) {
+//            buffer.skipBytes(2);
+//        } else {
+//            if(readerIndex>remain){
+//                buffer.readBytes(value,bulkReply.getReadable(),remain);
+//                bulkReply.setValue(value);
+//                buffer.skipBytes(2);
+//                remain=-1;
+//            }else {
+//                int startIndex = bulkReply.getReadable();
+//                int readLen = readerIndex;
+//                buffer.readBytes(value, startIndex, readLen);
+//                remain =remain -readLen;
+//                bulkReply.setReadable(readLen);
+//               // bulkReply.setValue(value);
+//                return false;
+//            }
+//
+//        }
+//
+//        return true;
+//    }
+//
+//    private int readInt(ByteBuf buffer) {
+//        return Integer.parseInt(readLine(buffer));
+//    }
 
 
-        int readerIndex = buffer.readableBytes();
-
-
-        //read "" or null
-        if (length == -1 || length == 0) {
-            buffer.skipBytes(2);
-        } else {
-            if(readerIndex>remain){
-                buffer.readBytes(value,bulkReply.getReadable(),remain);
-                bulkReply.setValue(value);
-                buffer.skipBytes(2);
-                remain=-1;
-            }else {
-                int startIndex = bulkReply.getReadable();
-                int readLen = readerIndex;
-                buffer.readBytes(value, startIndex, readLen);
-                remain =remain -readLen;
-                bulkReply.setReadable(readLen);
-               // bulkReply.setValue(value);
-                return false;
-            }
-
-        }
-
-        return true;
-    }
-
-    private int readInt(ByteBuf buffer) {
-        return Integer.parseInt(readLine(buffer));
-    }
-
-    private String readLine(ByteBuf byteBuf) {
-        StringBuilder sb = new StringBuilder();
-        char ch = (char) byteBuf.readByte();
-        while (ch != RedisConstants.CR_BYTE) {
-            sb.append(ch);
-            ch = (char) byteBuf.readByte();//\r
-        }
-        byteBuf.readByte();// \n
-        return sb.toString();
-    }
 }

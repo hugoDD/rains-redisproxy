@@ -33,8 +33,8 @@ public class RedisInLineRequestDecoder implements IRedisRequestDecoder {
             char c = (char) buf.readByte();
 
 
-
-            if(c==RedisConstants.SPACE_BYTE ){//set mykey 7\r\nmyvalue\r\n
+            //set mykey 7\r\nmyvalue\r\n
+            if(c==RedisConstants.SPACE_BYTE ){
                 //  buf.resetReaderIndex();
                 Assert.notNull(buf,"redis command is null");
                 src = new byte[len];
@@ -54,8 +54,8 @@ public class RedisInLineRequestDecoder implements IRedisRequestDecoder {
                     LoggerUtils.debug("Inline command: {},index=:{}", new String(src), start);
                 }
                 args.add(src);
-
-            }else if(c == RedisConstants.CR_BYTE && buf.readByte()== RedisConstants.LF_BYTE){//QUIT\r\n auth\r\n ping\r\n
+                //QUIT\r\n auth\r\n ping\r\n
+            }else if(c == RedisConstants.CR_BYTE && buf.readByte()== RedisConstants.LF_BYTE){
                 Assert.notNull(buf,"redis command is null");
 
 
